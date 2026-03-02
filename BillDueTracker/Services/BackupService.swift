@@ -85,10 +85,21 @@ struct BackupRestoreReport {
     let reminders: Int
     let proofs: Int
     let providerActions: Int
+    let deactivatedBillIDs: [UUID]
+
+    var deactivatedBillCount: Int {
+        deactivatedBillIDs.count
+    }
 }
 
 enum BackupValidationError: LocalizedError {
     case unsupportedSchema(version: Int)
+    case duplicateUserID(userID: UUID)
+    case duplicateBillID(billID: UUID)
+    case duplicateCycleID(cycleID: UUID)
+    case duplicateReminderID(reminderID: UUID)
+    case duplicateProofID(proofID: UUID)
+    case duplicateProviderActionID(actionID: UUID)
     case missingBillReference(cycleID: UUID, billID: UUID)
     case missingCycleReference(reminderID: UUID, cycleID: UUID)
     case missingProofCycleReference(proofID: UUID, cycleID: UUID)
@@ -97,6 +108,18 @@ enum BackupValidationError: LocalizedError {
         switch self {
         case let .unsupportedSchema(version):
             return "Unsupported backup schema version: \(version)."
+        case let .duplicateUserID(userID):
+            return "Backup contains duplicate user id \(userID.uuidString)."
+        case let .duplicateBillID(billID):
+            return "Backup contains duplicate bill id \(billID.uuidString)."
+        case let .duplicateCycleID(cycleID):
+            return "Backup contains duplicate cycle id \(cycleID.uuidString)."
+        case let .duplicateReminderID(reminderID):
+            return "Backup contains duplicate reminder id \(reminderID.uuidString)."
+        case let .duplicateProofID(proofID):
+            return "Backup contains duplicate proof id \(proofID.uuidString)."
+        case let .duplicateProviderActionID(actionID):
+            return "Backup contains duplicate provider action id \(actionID.uuidString)."
         case let .missingBillReference(cycleID, billID):
             return "Backup cycle \(cycleID.uuidString) references missing bill \(billID.uuidString)."
         case let .missingCycleReference(reminderID, cycleID):
@@ -244,142 +267,75 @@ enum BackupService {
         payload: BackupPayload,
         context: ModelContext,
         notificationService: ReminderNotificationService,
+        subscriptionTier: SubscriptionTier = .free,
         now: Date = .now
     ) async throws -> BackupRestoreReport {
         try validate(payload: payload)
+        let restorePlan = try prepareRestorePlan(
+            payload: payload,
+            subscriptionTier: subscriptionTier,
+            now: now
+        )
 
-        notificationService.cancelAll()
         try deleteCurrentData(context: context)
 
-        if payload.users.isEmpty {
-            let user = UserProfile(
-                email: "local-user@billduetracker.local",
-                timezoneIdentifier: TimeZone.current.identifier,
-                createdAt: now
-            )
+        for user in restorePlan.users {
             context.insert(user)
-        } else {
-            for user in payload.users {
-                context.insert(
-                    UserProfile(
-                        id: user.id,
-                        email: user.email,
-                        timezoneIdentifier: user.timezoneIdentifier,
-                        createdAt: user.createdAt,
-                        enabledReminderStagesRaw: user.enabledReminderStagesRaw,
-                        customProvidersByCategoryRaw: user.customProvidersByCategoryRaw
-                    )
-                )
-            }
+        }
+        for bill in restorePlan.bills {
+            context.insert(bill)
+        }
+        for cycle in restorePlan.cycles {
+            context.insert(cycle)
+        }
+        for reminder in restorePlan.reminders {
+            context.insert(reminder)
+        }
+        for proof in restorePlan.proofs {
+            context.insert(proof)
+        }
+        for action in restorePlan.providerActions {
+            context.insert(action)
         }
 
-        var billByID: [UUID: BillItem] = [:]
-        for bill in payload.bills {
-            let billModel = BillItem(
-                id: bill.id,
-                category: BillCategory(rawValue: bill.categoryRaw) ?? .utilityBill,
-                providerName: bill.providerName,
-                nickname: bill.nickname,
-                dueDay: bill.dueDay,
-                dueDateRule: DueDateRule(rawValue: bill.dueDateRuleRaw) ?? .endOfMonthClamp,
-                billingCadence: BillingCadence(rawValue: bill.billingCadenceRaw) ?? .monthly,
-                annualDueMonth: bill.annualDueMonth,
-                currency: bill.currency,
-                expectedAmount: bill.expectedAmount,
-                autopayEnabled: bill.autopayEnabled,
-                autopayNote: bill.autopayNote,
-                isActive: bill.isActive,
-                createdAt: bill.createdAt,
-                updatedAt: bill.updatedAt
-            )
-            context.insert(billModel)
-            billByID[bill.id] = billModel
-        }
-
-        var cycleByID: [UUID: BillCycle] = [:]
-        for cycle in payload.cycles {
-            let cycleModel = BillCycle(
-                id: cycle.id,
-                cycleMonth: cycle.cycleMonth,
-                dueDate: cycle.dueDate,
-                reminderState: ReminderStage(rawValue: cycle.reminderStateRaw) ?? .sevenDay,
-                paymentState: PaymentState(rawValue: cycle.paymentStateRaw) ?? .unpaid,
-                paidAt: cycle.paidAt,
-                overdueStartedAt: cycle.overdueStartedAt,
-                billItem: billByID[cycle.billID]
-            )
-            context.insert(cycleModel)
-            cycleByID[cycle.id] = cycleModel
-        }
-
-        var restoredReminders: [ReminderEvent] = []
-        for reminder in payload.reminders {
-            let reminderModel = ReminderEvent(
-                id: reminder.id,
-                stage: ReminderStage(rawValue: reminder.stageRaw) ?? .dueDay,
-                scheduledAt: reminder.scheduledAt,
-                sentAt: reminder.sentAt,
-                deliveryStatus: ReminderDeliveryStatus(rawValue: reminder.deliveryStatusRaw) ?? .pending,
-                billCycle: cycleByID[reminder.cycleID]
-            )
-            context.insert(reminderModel)
-            restoredReminders.append(reminderModel)
-        }
-
-        for proof in payload.proofs {
-            context.insert(
-                PaymentProof(
-                    id: proof.id,
-                    fileURLString: proof.fileURLString,
-                    fileType: proof.fileType,
-                    uploadedAt: proof.uploadedAt,
-                    billCycle: cycleByID[proof.cycleID]
-                )
-            )
-        }
-
-        for action in payload.providerActions {
-            context.insert(
-                ProviderAction(
-                    id: action.id,
-                    category: BillCategory(rawValue: action.categoryRaw) ?? .utilityBill,
-                    providerName: action.providerName,
-                    countryCode: action.countryCode,
-                    actionLabel: action.actionLabel,
-                    urlString: action.urlString,
-                    isActive: action.isActive,
-                    updatedAt: action.updatedAt
-                )
-            )
-        }
-
+        try ProviderActionSeeder.seedIfNeeded(context: context, saveChanges: false)
         try context.save()
 
-        for reminder in restoredReminders {
-            guard reminder.deliveryStatus == .pending,
-                  reminder.scheduledAt >= now,
-                  let bill = reminder.billCycle?.billItem else {
+        notificationService.cancelAll()
+
+        for reminder in restorePlan.remindersToSchedule {
+            guard let bill = reminder.billCycle?.billItem, bill.isActive else {
                 continue
             }
             await notificationService.schedule(event: reminder, for: bill)
         }
 
-        ProviderActionSeeder.seedIfNeeded(context: context)
         try context.save()
-
-        return BackupRestoreReport(
-            users: payload.users.count,
-            bills: payload.bills.count,
-            cycles: payload.cycles.count,
-            reminders: payload.reminders.count,
-            proofs: payload.proofs.count,
-            providerActions: payload.providerActions.count
-        )
+        return restorePlan.report
     }
 
     static func validate(payload: BackupPayload) throws {
         guard payload.schemaVersion == currentSchemaVersion else {
             throw BackupValidationError.unsupportedSchema(version: payload.schemaVersion)
+        }
+
+        if let duplicate = firstDuplicateID(in: payload.users.map(\.id)) {
+            throw BackupValidationError.duplicateUserID(userID: duplicate)
+        }
+        if let duplicate = firstDuplicateID(in: payload.bills.map(\.id)) {
+            throw BackupValidationError.duplicateBillID(billID: duplicate)
+        }
+        if let duplicate = firstDuplicateID(in: payload.cycles.map(\.id)) {
+            throw BackupValidationError.duplicateCycleID(cycleID: duplicate)
+        }
+        if let duplicate = firstDuplicateID(in: payload.reminders.map(\.id)) {
+            throw BackupValidationError.duplicateReminderID(reminderID: duplicate)
+        }
+        if let duplicate = firstDuplicateID(in: payload.proofs.map(\.id)) {
+            throw BackupValidationError.duplicateProofID(proofID: duplicate)
+        }
+        if let duplicate = firstDuplicateID(in: payload.providerActions.map(\.id)) {
+            throw BackupValidationError.duplicateProviderActionID(actionID: duplicate)
         }
 
         let billIDs = Set(payload.bills.map(\.id))
@@ -398,6 +354,231 @@ enum BackupService {
         }
     }
 
+    private static func prepareRestorePlan(
+        payload: BackupPayload,
+        subscriptionTier: SubscriptionTier,
+        now: Date
+    ) throws -> RestorePlan {
+        let gatedBills = gatedBillRecords(payload.bills, subscriptionTier: subscriptionTier)
+        let deactivatedBillIDs = Set(gatedBills.deactivatedBillIDs)
+
+        let users: [UserProfile]
+        if payload.users.isEmpty {
+            users = [
+                UserProfile(
+                    email: "local-user@billduetracker.local",
+                    timezoneIdentifier: TimeZone.current.identifier,
+                    createdAt: now
+                )
+            ]
+        } else {
+            users = payload.users.map {
+                UserProfile(
+                    id: $0.id,
+                    email: $0.email,
+                    timezoneIdentifier: $0.timezoneIdentifier,
+                    createdAt: $0.createdAt,
+                    enabledReminderStagesRaw: $0.enabledReminderStagesRaw,
+                    customProvidersByCategoryRaw: $0.customProvidersByCategoryRaw
+                )
+            }
+        }
+
+        var billByID: [UUID: BillItem] = [:]
+        let bills = gatedBills.records.map { billRecord in
+            let bill = BillItem(
+                id: billRecord.id,
+                category: BillCategory(rawValue: billRecord.categoryRaw) ?? .utilityBill,
+                providerName: billRecord.providerName,
+                nickname: billRecord.nickname,
+                dueDay: billRecord.dueDay,
+                dueDateRule: DueDateRule(rawValue: billRecord.dueDateRuleRaw) ?? .endOfMonthClamp,
+                billingCadence: BillingCadence(rawValue: billRecord.billingCadenceRaw) ?? .monthly,
+                annualDueMonth: billRecord.annualDueMonth,
+                currency: billRecord.currency,
+                expectedAmount: billRecord.expectedAmount,
+                autopayEnabled: billRecord.autopayEnabled,
+                autopayNote: billRecord.autopayNote,
+                isActive: billRecord.isActive,
+                createdAt: billRecord.createdAt,
+                updatedAt: billRecord.updatedAt
+            )
+            billByID[billRecord.id] = bill
+            return bill
+        }
+
+        var cycleByID: [UUID: BillCycle] = [:]
+        var billIDByCycleID: [UUID: UUID] = [:]
+        var cycles: [BillCycle] = []
+        cycles.reserveCapacity(payload.cycles.count)
+        for cycleRecord in payload.cycles {
+            guard let bill = billByID[cycleRecord.billID] else {
+                throw BackupValidationError.missingBillReference(cycleID: cycleRecord.id, billID: cycleRecord.billID)
+            }
+            let cycle = BillCycle(
+                id: cycleRecord.id,
+                cycleMonth: cycleRecord.cycleMonth,
+                dueDate: cycleRecord.dueDate,
+                reminderState: ReminderStage(rawValue: cycleRecord.reminderStateRaw) ?? .sevenDay,
+                paymentState: PaymentState(rawValue: cycleRecord.paymentStateRaw) ?? .unpaid,
+                paidAt: cycleRecord.paidAt,
+                overdueStartedAt: cycleRecord.overdueStartedAt,
+                billItem: bill
+            )
+            cycles.append(cycle)
+            cycleByID[cycleRecord.id] = cycle
+            billIDByCycleID[cycleRecord.id] = cycleRecord.billID
+        }
+
+        var reminders: [ReminderEvent] = []
+        reminders.reserveCapacity(payload.reminders.count)
+        for reminderRecord in payload.reminders {
+            guard let cycle = cycleByID[reminderRecord.cycleID] else {
+                throw BackupValidationError.missingCycleReference(
+                    reminderID: reminderRecord.id,
+                    cycleID: reminderRecord.cycleID
+                )
+            }
+            let reminder = ReminderEvent(
+                id: reminderRecord.id,
+                stage: ReminderStage(rawValue: reminderRecord.stageRaw) ?? .dueDay,
+                scheduledAt: reminderRecord.scheduledAt,
+                sentAt: reminderRecord.sentAt,
+                deliveryStatus: ReminderDeliveryStatus(rawValue: reminderRecord.deliveryStatusRaw) ?? .pending,
+                billCycle: cycle
+            )
+            if reminder.deliveryStatus == .pending,
+               let billID = billIDByCycleID[reminderRecord.cycleID],
+               deactivatedBillIDs.contains(billID) {
+                reminder.deliveryStatus = .cancelled
+            }
+            reminders.append(reminder)
+        }
+
+        var proofs: [PaymentProof] = []
+        proofs.reserveCapacity(payload.proofs.count)
+        for proofRecord in payload.proofs {
+            guard let cycle = cycleByID[proofRecord.cycleID] else {
+                throw BackupValidationError.missingProofCycleReference(
+                    proofID: proofRecord.id,
+                    cycleID: proofRecord.cycleID
+                )
+            }
+            proofs.append(
+                PaymentProof(
+                    id: proofRecord.id,
+                    fileURLString: proofRecord.fileURLString,
+                    fileType: proofRecord.fileType,
+                    uploadedAt: proofRecord.uploadedAt,
+                    billCycle: cycle
+                )
+            )
+        }
+
+        let providerActions = payload.providerActions.map { actionRecord in
+            ProviderAction(
+                id: actionRecord.id,
+                category: BillCategory(rawValue: actionRecord.categoryRaw) ?? .utilityBill,
+                providerName: actionRecord.providerName,
+                countryCode: actionRecord.countryCode,
+                actionLabel: actionRecord.actionLabel,
+                urlString: actionRecord.urlString,
+                isActive: actionRecord.isActive,
+                updatedAt: actionRecord.updatedAt
+            )
+        }
+
+        let remindersToSchedule = reminders.filter {
+            guard $0.deliveryStatus == .pending, $0.scheduledAt >= now else {
+                return false
+            }
+            return $0.billCycle?.billItem?.isActive == true
+        }
+
+        return RestorePlan(
+            users: users,
+            bills: bills,
+            cycles: cycles,
+            reminders: reminders,
+            proofs: proofs,
+            providerActions: providerActions,
+            remindersToSchedule: remindersToSchedule,
+            report: BackupRestoreReport(
+                users: users.count,
+                bills: bills.count,
+                cycles: cycles.count,
+                reminders: reminders.count,
+                proofs: proofs.count,
+                providerActions: providerActions.count,
+                deactivatedBillIDs: gatedBills.deactivatedBillIDs
+            )
+        )
+    }
+
+    private static func gatedBillRecords(
+        _ records: [BackupPayload.BillRecord],
+        subscriptionTier: SubscriptionTier
+    ) -> (records: [BackupPayload.BillRecord], deactivatedBillIDs: [UUID]) {
+        guard subscriptionTier == .free else {
+            return (records, [])
+        }
+
+        let active = records.filter(\.isActive)
+        let limit = UsageLimitService.freeActiveBillLimit
+        guard active.count > limit else {
+            return (records, [])
+        }
+
+        let sortedActive = active.sorted { lhs, rhs in
+            if lhs.updatedAt != rhs.updatedAt {
+                return lhs.updatedAt > rhs.updatedAt
+            }
+            if lhs.createdAt != rhs.createdAt {
+                return lhs.createdAt > rhs.createdAt
+            }
+            return lhs.id.uuidString < rhs.id.uuidString
+        }
+
+        let keepActiveIDs = Set(sortedActive.prefix(limit).map(\.id))
+        let deactivatedBillIDs = sortedActive
+            .dropFirst(limit)
+            .map(\.id)
+
+        let gatedRecords = records.map { record in
+            guard record.isActive, !keepActiveIDs.contains(record.id) else {
+                return record
+            }
+            return BackupPayload.BillRecord(
+                id: record.id,
+                categoryRaw: record.categoryRaw,
+                providerName: record.providerName,
+                nickname: record.nickname,
+                dueDay: record.dueDay,
+                dueDateRuleRaw: record.dueDateRuleRaw,
+                billingCadenceRaw: record.billingCadenceRaw,
+                annualDueMonth: record.annualDueMonth,
+                currency: record.currency,
+                expectedAmount: record.expectedAmount,
+                autopayEnabled: record.autopayEnabled,
+                autopayNote: record.autopayNote,
+                isActive: false,
+                createdAt: record.createdAt,
+                updatedAt: record.updatedAt
+            )
+        }
+        return (gatedRecords, deactivatedBillIDs)
+    }
+
+    private static func firstDuplicateID(in ids: [UUID]) -> UUID? {
+        var seen: Set<UUID> = []
+        for id in ids {
+            if !seen.insert(id).inserted {
+                return id
+            }
+        }
+        return nil
+    }
+
     private static func deleteCurrentData(context: ModelContext) throws {
         let reminders = try context.fetch(FetchDescriptor<ReminderEvent>())
         let proofs = try context.fetch(FetchDescriptor<PaymentProof>())
@@ -412,7 +593,16 @@ enum BackupService {
         for entity in bills { context.delete(entity) }
         for entity in actions { context.delete(entity) }
         for entity in users { context.delete(entity) }
+    }
 
-        try context.save()
+    private struct RestorePlan {
+        let users: [UserProfile]
+        let bills: [BillItem]
+        let cycles: [BillCycle]
+        let reminders: [ReminderEvent]
+        let proofs: [PaymentProof]
+        let providerActions: [ProviderAction]
+        let remindersToSchedule: [ReminderEvent]
+        let report: BackupRestoreReport
     }
 }

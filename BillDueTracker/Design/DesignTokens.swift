@@ -84,9 +84,16 @@ enum AppTheme {
 
     enum Radius {
         static let pill: CGFloat = 999
+        static let inner: CGFloat = 12
         static let card: CGFloat = 16
         static let section: CGFloat = 20
         static let sheet: CGFloat = 24
+    }
+
+    enum Border {
+        static let standard: CGFloat = 1
+        static let elevated: CGFloat = 1.2
+        static let emphasis: CGFloat = 1.25
     }
 }
 
@@ -103,7 +110,7 @@ extension View {
         modifier(AppScreenBackgroundModifier())
     }
 
-    func appElevatedCard(cornerRadius: CGFloat, borderWidth: CGFloat = 1.2) -> some View {
+    func appElevatedCard(cornerRadius: CGFloat, borderWidth: CGFloat = AppTheme.Border.elevated) -> some View {
         modifier(AppElevatedCardModifier(cornerRadius: cornerRadius, borderWidth: borderWidth))
     }
 }

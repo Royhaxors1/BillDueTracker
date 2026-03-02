@@ -3,10 +3,11 @@ import SwiftData
 
 @MainActor
 enum ProviderActionSeeder {
-    static func seedIfNeeded(context: ModelContext) {
+    static func seedIfNeeded(context: ModelContext, saveChanges: Bool = true) throws {
         let descriptor = FetchDescriptor<ProviderAction>()
-        let existing = (try? context.fetch(descriptor)) ?? []
-        let existingKeys = Set(existing.map(\.seedKey))
+        let existing = try context.fetch(descriptor)
+        var existingKeys = Set(existing.map(\.seedKey))
+        var insertedCount = 0
 
         for template in SGProviderCatalog.templates {
             let key = ProviderAction.seedKey(
@@ -24,8 +25,12 @@ enum ProviderActionSeeder {
                 urlString: template.urlString
             )
             context.insert(action)
+            existingKeys.insert(key)
+            insertedCount += 1
         }
 
-        try? context.save()
+        if saveChanges, insertedCount > 0 {
+            try context.save()
+        }
     }
 }

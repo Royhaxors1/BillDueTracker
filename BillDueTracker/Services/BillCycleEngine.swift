@@ -8,6 +8,7 @@ struct ReminderPlan: Equatable {
 enum BillCycleEngine {
     static let reminderHour = 9
     static let reminderMinute = 0
+    static let overdueReminderLookaheadDays = 7
 
     static func cycleMonthIdentifier(for date: Date, in timeZone: TimeZone) -> String {
         var calendar = Calendar.gregorian
@@ -95,7 +96,14 @@ enum BillCycleEngine {
         if enabledStages.contains(.overdue), dueDayHasPassed(dueDate: dueDate, now: now, in: timeZone) {
             let firstOverdue = dueDate.addingDays(1, in: timeZone)
             let overdueStart = max(firstOverdue, nextDailyReminderSlot(after: now, in: timeZone))
-            plans.append(ReminderPlan(stage: .overdue, scheduledAt: overdueStart))
+            for offset in 0..<overdueReminderLookaheadDays {
+                plans.append(
+                    ReminderPlan(
+                        stage: .overdue,
+                        scheduledAt: overdueStart.addingDays(offset, in: timeZone)
+                    )
+                )
+            }
         }
 
         return plans.sorted { lhs, rhs in

@@ -128,7 +128,7 @@ struct SettingsView: View {
                         .accessibilityIdentifier("settings.appearanceMode")
                     }
 
-                    SectionCard(title: "Notifications", subtitle: "Manage permission, schedule stages, and quick checks.") {
+                    SectionCard(title: "Notifications", subtitle: "Permission and reminder stages.") {
                         VStack(spacing: AppTheme.Spacing.sm) {
                             detailLine("Permission", authorizationLabel(authorizationStatus))
                             detailLine(
@@ -145,12 +145,12 @@ struct SettingsView: View {
                             }
                             .padding(AppTheme.Spacing.sm)
                             .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                RoundedRectangle(cornerRadius: AppTheme.Radius.inner, style: .continuous)
                                     .fill(reminderFreshness.backgroundColor)
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .stroke(AppTheme.Colors.border, lineWidth: 1)
+                                RoundedRectangle(cornerRadius: AppTheme.Radius.inner, style: .continuous)
+                                    .stroke(AppTheme.Colors.border, lineWidth: AppTheme.Border.standard)
                             )
 
                             VStack(alignment: .leading, spacing: AppTheme.Spacing.xs + 2) {
@@ -165,12 +165,12 @@ struct SettingsView: View {
                             }
                             .padding(AppTheme.Spacing.sm)
                             .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                RoundedRectangle(cornerRadius: AppTheme.Radius.inner, style: .continuous)
                                     .fill(AppTheme.Colors.surface)
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .stroke(AppTheme.Colors.border, lineWidth: 1)
+                                RoundedRectangle(cornerRadius: AppTheme.Radius.inner, style: .continuous)
+                                    .stroke(AppTheme.Colors.border, lineWidth: AppTheme.Border.standard)
                             )
 
                             if authorizationStatus != .authorized {
@@ -476,9 +476,14 @@ struct SettingsView: View {
             let report = try await BackupService.restore(
                 payload: payload,
                 context: modelContext,
-                notificationService: notificationService
+                notificationService: notificationService,
+                subscriptionTier: entitlementState.tier
             )
-            statusMessage = "Restore complete: \(report.bills) bills, \(report.cycles) cycles, \(report.reminders) reminders."
+            if report.deactivatedBillCount > 0 {
+                statusMessage = "Restore complete: \(report.bills) bills, \(report.cycles) cycles, \(report.reminders) reminders. \(report.deactivatedBillCount) bill(s) were deactivated to match the Free plan limit."
+            } else {
+                statusMessage = "Restore complete: \(report.bills) bills, \(report.cycles) cycles, \(report.reminders) reminders."
+            }
             await refreshNotificationHealth()
         } catch {
             statusMessage = "Restore failed: \(error.localizedDescription)"

@@ -28,7 +28,7 @@ struct DashboardView: View {
     private static let amountFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.currencyCode = "SGD"
+        formatter.currencyCode = Locale.current.currencyCode ?? "SGD"
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
         return formatter
@@ -78,7 +78,7 @@ struct DashboardView: View {
                         .animation(.snappy(duration: 0.3), value: paidThisMonthBills.count)
                     }
 
-                    SectionCard(title: "Scope", subtitle: "Filter active and inactive bills.") {
+                    SectionCard(title: "Filter", subtitle: "Choose which bills to show.") {
                         Picker("Bill Scope", selection: $scopeFilter) {
                             ForEach(BillScopeFilter.allCases) { filter in
                                 Text(filter.title).tag(filter)
@@ -147,7 +147,7 @@ struct DashboardView: View {
                     if scopeFilter != .inactive, !paidThisMonthBills.isEmpty {
                         billSection(
                             title: "Paid This Month",
-                            subtitle: "Verified completed cycles in current month.",
+                            subtitle: "Bills you already paid this month.",
                             pairs: paidThisMonthBills
                         )
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
@@ -350,7 +350,7 @@ struct DashboardView: View {
         if let formatted = Self.amountFormatter.string(from: NSNumber(value: amount)) {
             return formatted
         }
-        return String(format: "SGD %.2f", amount)
+        return String(format: "%.2f", amount)
     }
 
     private var activeBillCount: Int {

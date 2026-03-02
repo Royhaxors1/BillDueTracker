@@ -1,5 +1,6 @@
 import XCTest
 import SwiftData
+import UserNotifications
 @testable import BillDueTracker
 
 @MainActor
@@ -170,7 +171,7 @@ final class BillStatusTests: XCTestCase {
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let context = ModelContext(container)
-        let notificationService = ReminderNotificationService.shared
+        let notificationService = ReminderNotificationService(center: BillStatusFakeNotificationCenter())
 
         var monthlyDraft = BillDraft()
         monthlyDraft.category = .subscriptionDue
@@ -258,4 +259,19 @@ final class BillStatusTests: XCTestCase {
         let providers = BillOperations.providerNames(for: .utilityBill, context: context)
         XCTAssertTrue(providers.contains(where: { $0 == "My Water Co" }))
     }
+}
+
+@MainActor
+private final class BillStatusFakeNotificationCenter: UserNotificationCentering {
+    func requestAuthorization(options _: UNAuthorizationOptions) async throws -> Bool { true }
+
+    func add(_: UNNotificationRequest) async throws {}
+
+    func removePendingNotificationRequests(withIdentifiers _: [String]) {}
+
+    func removeAllPendingNotificationRequests() {}
+
+    func authorizationStatus() async -> UNAuthorizationStatus { .authorized }
+
+    func pendingNotificationRequests() async -> [UNNotificationRequest] { [] }
 }

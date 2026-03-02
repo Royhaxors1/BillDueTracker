@@ -35,7 +35,7 @@ struct SectionCard<Content: View>: View {
             RoundedRectangle(cornerRadius: AppTheme.Radius.section, style: .continuous)
                 .fill(AppTheme.Colors.surface)
         )
-        .appElevatedCard(cornerRadius: AppTheme.Radius.section, borderWidth: 1.2)
+        .appElevatedCard(cornerRadius: AppTheme.Radius.section, borderWidth: AppTheme.Border.elevated)
     }
 }
 
@@ -70,7 +70,9 @@ struct MetricTile: View {
                     .fill(AppTheme.Colors.toneFill(for: tone))
             }
         )
-        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: 1.25)
+        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: AppTheme.Border.emphasis)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title): \(value)")
     }
 }
 
@@ -90,7 +92,10 @@ struct StatusPill: View {
             .clipShape(Capsule())
             .overlay(
                 Capsule()
-                    .stroke(AppTheme.Colors.tint(for: tone).opacity(colorScheme == .dark ? 0.46 : 0.25), lineWidth: 1)
+                    .stroke(
+                        AppTheme.Colors.tint(for: tone).opacity(colorScheme == .dark ? 0.46 : 0.25),
+                        lineWidth: AppTheme.Border.standard
+                    )
             )
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Status: \(label)")
@@ -103,11 +108,12 @@ struct EmptyStateCard: View {
     let actionTitle: String
     let systemImage: String
     let action: () -> Void
+    @ScaledMetric(relativeTo: .title3) private var iconSize: CGFloat = 34
 
     var body: some View {
         VStack(spacing: AppTheme.Spacing.md) {
             Image(systemName: systemImage)
-                .font(.system(size: 34, weight: .semibold))
+                .font(.system(size: iconSize, weight: .semibold))
                 .foregroundStyle(AppTheme.Colors.accent)
                 .padding(AppTheme.Spacing.sm)
                 .background(AppTheme.Colors.accent.opacity(0.12))
@@ -132,7 +138,7 @@ struct EmptyStateCard: View {
             RoundedRectangle(cornerRadius: AppTheme.Radius.section, style: .continuous)
                 .fill(AppTheme.Colors.surface)
         )
-        .appElevatedCard(cornerRadius: AppTheme.Radius.section, borderWidth: 1.2)
+        .appElevatedCard(cornerRadius: AppTheme.Radius.section, borderWidth: AppTheme.Border.elevated)
     }
 }
 
@@ -140,6 +146,7 @@ struct PrimaryActionButton: View {
     let title: String
     let systemImage: String?
     let action: () -> Void
+    @ScaledMetric(relativeTo: .body) private var minButtonHeight: CGFloat = 44
 
     init(title: String, systemImage: String? = nil, action: @escaping () -> Void) {
         self.title = title
@@ -157,13 +164,14 @@ struct PrimaryActionButton: View {
                     .fontWeight(.semibold)
             }
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 44)
+            .frame(minHeight: minButtonHeight)
             .padding(.horizontal, AppTheme.Spacing.sm)
             .foregroundStyle(.white)
             .background(AppTheme.Colors.accent)
             .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
     }
 }
 
@@ -196,10 +204,12 @@ struct SwipeToDeleteContainer<Content: View>: View {
             .buttonStyle(.plain)
             .padding(.leading, AppTheme.Spacing.sm)
             .modifier(ConditionalAccessibilityIdentifier(identifier: actionAccessibilityIdentifier))
+            .accessibilitySortPriority(0)
 
             content()
                 .contentShape(Rectangle())
                 .offset(x: contentOffset)
+                .accessibilitySortPriority(1)
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 10)
                         .onChanged { value in

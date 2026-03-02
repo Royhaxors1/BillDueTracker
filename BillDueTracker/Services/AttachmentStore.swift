@@ -6,6 +6,11 @@ struct AttachmentStore {
     }
 
     private let directoryName = "PaymentProofs"
+    private let baseDirectoryURL: URL?
+
+    init(baseDirectoryURL: URL? = nil) {
+        self.baseDirectoryURL = baseDirectoryURL
+    }
 
     func store(data: Data, fileExtension: String) throws -> URL {
         let directory = try proofDirectoryURL()
@@ -34,10 +39,18 @@ struct AttachmentStore {
     }
 
     private func proofDirectoryURL() throws -> URL {
-        guard let baseURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+        let resolvedBaseURL: URL
+        if let baseDirectoryURL {
+            resolvedBaseURL = baseDirectoryURL
+        } else if let applicationSupportURL = FileManager.default.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first {
+            resolvedBaseURL = applicationSupportURL
+        } else {
             throw StoreError.invalidDirectory
         }
-        let directoryURL = baseURL.appendingPathComponent(directoryName, isDirectory: true)
+        let directoryURL = resolvedBaseURL.appendingPathComponent(directoryName, isDirectory: true)
         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
         return directoryURL
     }

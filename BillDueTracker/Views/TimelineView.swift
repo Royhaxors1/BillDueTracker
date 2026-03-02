@@ -17,7 +17,7 @@ struct TimelineView: View {
     private static let amountFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.currencyCode = "SGD"
+        formatter.currencyCode = Locale.current.currencyCode ?? "SGD"
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
         return formatter
@@ -210,7 +210,7 @@ struct TimelineView: View {
             RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
                 .fill(AppTheme.Colors.surfaceElevated)
         )
-        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: 1)
+        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: AppTheme.Border.standard)
     }
 
     @ViewBuilder
@@ -268,7 +268,7 @@ struct TimelineView: View {
         if let formatted = Self.amountFormatter.string(from: NSNumber(value: amount)) {
             return formatted
         }
-        return String(format: "SGD %.2f", amount)
+        return String(format: "%.2f", amount)
     }
 
     private func actionRow(icon: String, text: String) -> some View {
@@ -304,7 +304,7 @@ struct TimelineView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
-                .stroke(AppTheme.Colors.border, lineWidth: 1)
+                .stroke(AppTheme.Colors.border, lineWidth: AppTheme.Border.standard)
         )
     }
 

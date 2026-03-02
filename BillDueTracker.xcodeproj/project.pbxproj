@@ -36,8 +36,10 @@
 		76E6BE54ADDFFEE4C02E4381 /* ReminderRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B6CF7A64AB333D840C5D7 /* ReminderRowView.swift */; };
 		7AE57D23865A562DFFFF7119 /* ReminderEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85E85A55244B4E9ECE39625 /* ReminderEvent.swift */; };
 		7D5BB36B3E2F8CEE2290089D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532DC6A1D46A5D73053CCCC8 /* AppDelegate.swift */; };
+		8816ED850A80FD8866861934 /* AttachmentStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D62E4976E29FE00590F3723 /* AttachmentStoreTests.swift */; };
 		898B1070859D5572A28AEF33 /* ProviderActionSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C662889B9823EA3A7F2F0AA /* ProviderActionSeeder.swift */; };
 		8CA4EC4F4D1593A12A8B9D48 /* BillCSVExportServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4FE2A5C631703A3E88F9B9 /* BillCSVExportServiceTests.swift */; };
+		9C6767DEA7CCC1C9C06BA8C0 /* BillOperationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C892BE7C67A55E8B9944AAA8 /* BillOperationsTests.swift */; };
 		9D3ED1EBCF4A3447E9C442D1 /* AppBootstrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8782E04D8C7A41D396458C5F /* AppBootstrapper.swift */; };
 		AB792592BC2E23BA7C34370D /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B78B5A3F0DEC297B2AF63C88 /* UserProfile.swift */; };
 		AE30186CABBD15ED5CE25B70 /* BillCycleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B640B4819F08259AC641846 /* BillCycleEngine.swift */; };
@@ -77,6 +79,7 @@
 		0F4C0539F38F51CDAC6DE1A8 /* BillExtractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillExtractionService.swift; sourceTree = "<group>"; };
 		214BBE4C9A4DA40046AA0AB8 /* ReminderNotificationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationServiceTests.swift; sourceTree = "<group>"; };
 		28543444ACCFF27D0E762F9C /* SGProviderCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SGProviderCatalog.swift; sourceTree = "<group>"; };
+		2D62E4976E29FE00590F3723 /* AttachmentStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentStoreTests.swift; sourceTree = "<group>"; };
 		321C12AE0AA2E13B89E3E291 /* EntitlementStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementStateTests.swift; sourceTree = "<group>"; };
 		340C652DF0115A52DB76367B /* SharedUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedUIComponents.swift; sourceTree = "<group>"; };
 		3C47ED1BDC73D7D0D3FDA46B /* BillDueTrackerUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BillDueTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,6 +118,7 @@
 		C1636DCD9A1C601C13C96A91 /* EntitlementState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementState.swift; sourceTree = "<group>"; };
 		C7E68F15653DE7B24AA72B81 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C85E85A55244B4E9ECE39625 /* ReminderEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderEvent.swift; sourceTree = "<group>"; };
+		C892BE7C67A55E8B9944AAA8 /* BillOperationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillOperationsTests.swift; sourceTree = "<group>"; };
 		D298A945620283B2D5C9AA0F /* AttachmentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentStore.swift; sourceTree = "<group>"; };
 		D53B6227FAAADDB409CA6AB5 /* BillDueTracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BillDueTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD8455BA99C66702AEDA400F /* BackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupService.swift; sourceTree = "<group>"; };
@@ -212,10 +216,12 @@
 		86F0862789ECFFDA9E4837A5 /* BillDueTrackerTests */ = {
 			isa = PBXGroup;
 			children = (
+				2D62E4976E29FE00590F3723 /* AttachmentStoreTests.swift */,
 				9F42AF137C73F7A7251F3134 /* BackupServiceTests.swift */,
 				6A4FE2A5C631703A3E88F9B9 /* BillCSVExportServiceTests.swift */,
 				7B3AFDCDC8CAD3E0D89A101A /* BillCycleEngineTests.swift */,
 				437AA32870D42544EB6B1337 /* BillExtractionServiceTests.swift */,
+				C892BE7C67A55E8B9944AAA8 /* BillOperationsTests.swift */,
 				B52D1BA76F52419501DA74E8 /* BillStatusTests.swift */,
 				321C12AE0AA2E13B89E3E291 /* EntitlementStateTests.swift */,
 				214BBE4C9A4DA40046AA0AB8 /* ReminderNotificationServiceTests.swift */,
@@ -391,10 +397,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8816ED850A80FD8866861934 /* AttachmentStoreTests.swift in Sources */,
 				67D550830E65821AEE1CF40A /* BackupServiceTests.swift in Sources */,
 				8CA4EC4F4D1593A12A8B9D48 /* BillCSVExportServiceTests.swift in Sources */,
 				B7DA30C046F5F9CC8D7A1FB0 /* BillCycleEngineTests.swift in Sources */,
 				4117FC93F3DD8F8E31E394DE /* BillExtractionServiceTests.swift in Sources */,
+				9C6767DEA7CCC1C9C06BA8C0 /* BillOperationsTests.swift in Sources */,
 				F1556A2AEE97124366700430 /* BillStatusTests.swift in Sources */,
 				E569BB59A2A2EC2CC673E882 /* EntitlementStateTests.swift in Sources */,
 				1D54CDF8CF3ECCB07E0ACE18 /* ReminderNotificationServiceTests.swift in Sources */,

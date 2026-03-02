@@ -118,6 +118,84 @@ final class BackupServiceTests: XCTestCase {
         }
     }
 
+    func testValidateFailsWhenCycleReferencesMissingBill() {
+        let missingBillID = UUID()
+        let payload = BackupPayload(
+            schemaVersion: BackupService.currentSchemaVersion,
+            exportedAt: .now,
+            users: [],
+            bills: [],
+            cycles: [
+                BackupPayload.CycleRecord(
+                    id: UUID(),
+                    cycleMonth: "2026-03",
+                    dueDate: .now,
+                    reminderStateRaw: ReminderStage.sevenDay.rawValue,
+                    paymentStateRaw: PaymentState.unpaid.rawValue,
+                    paidAt: nil,
+                    overdueStartedAt: nil,
+                    billID: missingBillID
+                )
+            ],
+            reminders: [],
+            proofs: [],
+            providerActions: []
+        )
+
+        XCTAssertThrowsError(try BackupService.validate(payload: payload)) { error in
+            guard case BackupValidationError.missingBillReference = error else {
+                return XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+
+    func testValidateFailsWhenProofReferencesMissingCycle() {
+        let billID = UUID()
+        let missingCycleID = UUID()
+        let payload = BackupPayload(
+            schemaVersion: BackupService.currentSchemaVersion,
+            exportedAt: .now,
+            users: [],
+            bills: [
+                BackupPayload.BillRecord(
+                    id: billID,
+                    categoryRaw: BillCategory.utilityBill.rawValue,
+                    providerName: "SP Group",
+                    nickname: "Home",
+                    dueDay: 10,
+                    dueDateRuleRaw: DueDateRule.endOfMonthClamp.rawValue,
+                    billingCadenceRaw: BillingCadence.monthly.rawValue,
+                    annualDueMonth: nil,
+                    currency: "SGD",
+                    expectedAmount: nil,
+                    autopayEnabled: false,
+                    autopayNote: "",
+                    isActive: true,
+                    createdAt: .now,
+                    updatedAt: .now
+                )
+            ],
+            cycles: [],
+            reminders: [],
+            proofs: [
+                BackupPayload.ProofRecord(
+                    id: UUID(),
+                    fileURLString: "file:///tmp/proof.jpg",
+                    fileType: "jpg",
+                    uploadedAt: .now,
+                    cycleID: missingCycleID
+                )
+            ],
+            providerActions: []
+        )
+
+        XCTAssertThrowsError(try BackupService.validate(payload: payload)) { error in
+            guard case BackupValidationError.missingProofCycleReference = error else {
+                return XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+
     func testRestoreReplacesExistingData() async throws {
         let (context, _) = try makeInMemoryContext()
         let notificationService = ReminderNotificationService(center: BackupFakeNotificationCenter())
@@ -190,6 +268,200 @@ final class BackupServiceTests: XCTestCase {
         XCTAssertEqual(bills.first?.nickname, "Utilities")
     }
 
+    func testRestoreCanReplaceExistingRowsWithSameBillID() async throws {
+        let (context, _) = try makeInMemoryContext()
+        let notificationService = ReminderNotificationService(center: BackupFakeNotificationCenter())
+
+        let sharedBillID = UUID()
+        let existingBill = BillItem(
+            id: sharedBillID,
+            category: .telcoBill,
+            providerName: "Old Provider",
+            nickname: "Old",
+            dueDay: 1
+        )
+        context.insert(existingBill)
+        try context.save()
+
+        let payload = BackupPayload(
+            schemaVersion: BackupService.currentSchemaVersion,
+            exportedAt: .now,
+            users: [],
+            bills: [
+                BackupPayload.BillRecord(
+                    id: sharedBillID,
+                    categoryRaw: BillCategory.utilityBill.rawValue,
+                    providerName: "SP Group",
+                    nickname: "Utilities",
+                    dueDay: 12,
+                    dueDateRuleRaw: DueDateRule.endOfMonthClamp.rawValue,
+                    billingCadenceRaw: BillingCadence.monthly.rawValue,
+                    annualDueMonth: nil,
+                    currency: "SGD",
+                    expectedAmount: 140.0,
+                    autopayEnabled: false,
+                    autopayNote: "",
+                    isActive: true,
+                    createdAt: .now,
+                    updatedAt: .now
+                )
+            ],
+            cycles: [],
+            reminders: [],
+            proofs: [],
+            providerActions: []
+        )
+
+        _ = try await BackupService.restore(
+            payload: payload,
+            context: context,
+            notificationService: notificationService,
+            now: .now
+        )
+
+        let bills = try context.fetch(FetchDescriptor<BillItem>())
+        XCTAssertEqual(bills.count, 1)
+        XCTAssertEqual(bills.first?.id, sharedBillID)
+        XCTAssertEqual(bills.first?.providerName, "SP Group")
+        XCTAssertEqual(bills.first?.nickname, "Utilities")
+    }
+
+    func testRestoreFailsPreflightAndPreservesExistingData() async throws {
+        let (context, _) = try makeInMemoryContext()
+        let notificationService = ReminderNotificationService(center: BackupFakeNotificationCenter())
+
+        let existingBill = BillItem(
+            category: .creditCardDue,
+            providerName: "DBS",
+            nickname: "Existing",
+            dueDay: 8
+        )
+        context.insert(existingBill)
+        try context.save()
+
+        let duplicateBillID = UUID()
+        let payload = BackupPayload(
+            schemaVersion: BackupService.currentSchemaVersion,
+            exportedAt: .now,
+            users: [],
+            bills: [
+                BackupPayload.BillRecord(
+                    id: duplicateBillID,
+                    categoryRaw: BillCategory.utilityBill.rawValue,
+                    providerName: "SP Group",
+                    nickname: "Utilities A",
+                    dueDay: 10,
+                    dueDateRuleRaw: DueDateRule.endOfMonthClamp.rawValue,
+                    billingCadenceRaw: BillingCadence.monthly.rawValue,
+                    annualDueMonth: nil,
+                    currency: "SGD",
+                    expectedAmount: nil,
+                    autopayEnabled: false,
+                    autopayNote: "",
+                    isActive: true,
+                    createdAt: .now,
+                    updatedAt: .now
+                ),
+                BackupPayload.BillRecord(
+                    id: duplicateBillID,
+                    categoryRaw: BillCategory.telcoBill.rawValue,
+                    providerName: "M1",
+                    nickname: "Utilities B",
+                    dueDay: 11,
+                    dueDateRuleRaw: DueDateRule.endOfMonthClamp.rawValue,
+                    billingCadenceRaw: BillingCadence.monthly.rawValue,
+                    annualDueMonth: nil,
+                    currency: "SGD",
+                    expectedAmount: nil,
+                    autopayEnabled: false,
+                    autopayNote: "",
+                    isActive: true,
+                    createdAt: .now,
+                    updatedAt: .now
+                )
+            ],
+            cycles: [],
+            reminders: [],
+            proofs: [],
+            providerActions: []
+        )
+
+        await XCTAssertThrowsErrorAsync {
+            _ = try await BackupService.restore(
+                payload: payload,
+                context: context,
+                notificationService: notificationService,
+                now: .now
+            )
+        } validateError: { error in
+            guard case BackupValidationError.duplicateBillID = error else {
+                return XCTFail("Unexpected error: \(error)")
+            }
+        }
+
+        let bills = try context.fetch(FetchDescriptor<BillItem>())
+        XCTAssertEqual(bills.count, 1)
+        XCTAssertEqual(bills.first?.providerName, "DBS")
+    }
+
+    func testRestoreFreeTierDeterministicallyDeactivatesExcessActiveBills() async throws {
+        let (context, _) = try makeInMemoryContext()
+        let notificationService = ReminderNotificationService(center: BackupFakeNotificationCenter())
+        let baseTime = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let billIDs = (0..<10).map { _ in UUID() }
+        let billRecords = billIDs.enumerated().map { index, billID in
+            BackupPayload.BillRecord(
+                id: billID,
+                categoryRaw: BillCategory.utilityBill.rawValue,
+                providerName: "Provider \(index)",
+                nickname: "Bill \(index)",
+                dueDay: 12,
+                dueDateRuleRaw: DueDateRule.endOfMonthClamp.rawValue,
+                billingCadenceRaw: BillingCadence.monthly.rawValue,
+                annualDueMonth: nil,
+                currency: "SGD",
+                expectedAmount: nil,
+                autopayEnabled: false,
+                autopayNote: "",
+                isActive: true,
+                createdAt: baseTime.addingTimeInterval(TimeInterval(index)),
+                updatedAt: baseTime.addingTimeInterval(TimeInterval(index))
+            )
+        }
+
+        let payload = BackupPayload(
+            schemaVersion: BackupService.currentSchemaVersion,
+            exportedAt: .now,
+            users: [],
+            bills: billRecords,
+            cycles: [],
+            reminders: [],
+            proofs: [],
+            providerActions: []
+        )
+
+        let report = try await BackupService.restore(
+            payload: payload,
+            context: context,
+            notificationService: notificationService,
+            subscriptionTier: .free,
+            now: baseTime
+        )
+
+        let bills = try context.fetch(FetchDescriptor<BillItem>())
+        XCTAssertEqual(bills.count, 10)
+        XCTAssertEqual(bills.filter(\.isActive).count, UsageLimitService.freeActiveBillLimit)
+        XCTAssertEqual(report.deactivatedBillCount, 2)
+
+        let expectedDeactivatedIDs = [billIDs[1], billIDs[0]]
+        XCTAssertEqual(report.deactivatedBillIDs, expectedDeactivatedIDs)
+
+        let deactivatedBills = bills.filter { expectedDeactivatedIDs.contains($0.id) }
+        XCTAssertEqual(deactivatedBills.count, 2)
+        XCTAssertTrue(deactivatedBills.allSatisfy { !$0.isActive })
+    }
+
     private func makeInMemoryContext() throws -> (ModelContext, ModelContainer) {
         let container = try ModelContainer(
             for: UserProfile.self,
@@ -201,6 +473,20 @@ final class BackupServiceTests: XCTestCase {
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         return (ModelContext(container), container)
+    }
+}
+
+private func XCTAssertThrowsErrorAsync(
+    _ expression: @escaping () async throws -> Void,
+    validateError: (Error) -> Void,
+    file: StaticString = #filePath,
+    line: UInt = #line
+) async {
+    do {
+        try await expression()
+        XCTFail("Expected expression to throw an error", file: file, line: line)
+    } catch {
+        validateError(error)
     }
 }
 

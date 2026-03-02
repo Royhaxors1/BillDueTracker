@@ -3,15 +3,16 @@ import SwiftUI
 struct BillCardView: View {
     let bill: BillItem
     let cycle: BillCycle?
+    @ScaledMetric(relativeTo: .body) private var categoryIconSize: CGFloat = 32
 
     var body: some View {
         HStack(alignment: .top, spacing: AppTheme.Spacing.sm) {
             Image(systemName: bill.category.symbolName)
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(AppTheme.Colors.tint(for: tone))
-                .frame(width: 32, height: 32)
+                .frame(width: categoryIconSize, height: categoryIconSize)
                 .background(AppTheme.Colors.tint(for: tone).opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.inner - 2, style: .continuous))
 
             VStack(alignment: .leading, spacing: AppTheme.Spacing.xxs) {
                 Text(bill.displayName)
@@ -49,7 +50,9 @@ struct BillCardView: View {
             RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
                 .fill(AppTheme.Colors.surface)
         )
-        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: 1.2)
+        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: AppTheme.Border.elevated)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilitySummary)
     }
 
     private var statusText: String {
@@ -94,5 +97,15 @@ struct BillCardView: View {
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return "Due \(formatter.string(from: cycle.dueDate))"
+    }
+
+    private var accessibilitySummary: String {
+        let provider = bill.providerName
+        let status = statusText
+        if let cycle {
+            let dueDate = cycle.dueDate.formatted(date: .abbreviated, time: .omitted)
+            return "\(bill.displayName), \(provider), \(status), due \(dueDate)"
+        }
+        return "\(bill.displayName), \(provider), \(status)"
     }
 }

@@ -315,12 +315,12 @@ struct BillDetailView: View {
                         }
                         .padding(AppTheme.Spacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            RoundedRectangle(cornerRadius: AppTheme.Radius.inner, style: .continuous)
                                 .fill(AppTheme.Colors.surfaceElevated)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .stroke(AppTheme.Colors.border, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: AppTheme.Radius.inner, style: .continuous)
+                                .stroke(AppTheme.Colors.border, lineWidth: AppTheme.Border.standard)
                         )
                     }
                 }
@@ -377,12 +377,12 @@ struct BillDetailView: View {
                         }
                         .padding(AppTheme.Spacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            RoundedRectangle(cornerRadius: AppTheme.Radius.inner, style: .continuous)
                                 .fill(AppTheme.Colors.surfaceElevated)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .stroke(AppTheme.Colors.border, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: AppTheme.Radius.inner, style: .continuous)
+                                .stroke(AppTheme.Colors.border, lineWidth: AppTheme.Border.standard)
                         )
                     }
                 }

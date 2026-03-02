@@ -129,8 +129,8 @@ struct QuickAddBillView: View {
                     }
 
                     Picker("Due day behavior", selection: $draft.dueDateRule) {
-                        Text("End-of-month clamp").tag(DueDateRule.endOfMonthClamp)
-                        Text("Fixed day").tag(DueDateRule.fixedDay)
+                        Text("Use last day in short months").tag(DueDateRule.endOfMonthClamp)
+                        Text("Keep exact day only").tag(DueDateRule.fixedDay)
                     }
                 }
 

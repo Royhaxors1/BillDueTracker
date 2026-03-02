@@ -19,10 +19,10 @@ struct ReminderRowView: View {
         }
         .padding(AppTheme.Spacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: AppTheme.Radius.inner, style: .continuous)
                 .fill(AppTheme.Colors.surface)
         )
-        .appElevatedCard(cornerRadius: 12, borderWidth: 1.15)
+        .appElevatedCard(cornerRadius: AppTheme.Radius.inner, borderWidth: AppTheme.Border.elevated)
     }
 
     private var deliveryTone: AppTone {

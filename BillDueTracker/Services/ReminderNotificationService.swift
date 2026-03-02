@@ -106,15 +106,11 @@ final class ReminderNotificationService {
         }
         content.userInfo = userInfo
 
-        let trigger: UNNotificationTrigger
-        switch event.stage {
-        case .overdue:
-            let components = Calendar.gregorian.dateComponents([.hour, .minute], from: event.scheduledAt)
-            trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
-        default:
-            let components = Calendar.gregorian.dateComponents([.year, .month, .day, .hour, .minute], from: event.scheduledAt)
-            trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
-        }
+        let components = Calendar.gregorian.dateComponents(
+            [.year, .month, .day, .hour, .minute],
+            from: event.scheduledAt
+        )
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
 
         let request = UNNotificationRequest(
             identifier: event.notificationIdentifier,

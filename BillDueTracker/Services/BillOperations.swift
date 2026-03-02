@@ -10,7 +10,11 @@ enum BillOperations {
         timeZone: TimeZone = .current
     ) async {
         ensureDefaultUser(context: context)
-        ProviderActionSeeder.seedIfNeeded(context: context)
+        do {
+            try ProviderActionSeeder.seedIfNeeded(context: context)
+        } catch {
+            reportCriticalError(error, operation: "seeding provider actions during bootstrap")
+        }
         await applyUITestSeedIfRequested(
             context: context,
             notificationService: notificationService,
@@ -32,7 +36,13 @@ enum BillOperations {
         timeZone: TimeZone = .current
     ) async {
         let descriptor = FetchDescriptor<BillItem>()
-        let bills = (try? context.fetch(descriptor)) ?? []
+        let bills: [BillItem]
+        do {
+            bills = try context.fetch(descriptor)
+        } catch {
+            reportCriticalError(error, operation: "fetching bills for reminder reconciliation")
+            return
+        }
         for bill in bills where bill.isActive {
             await refreshCyclesAndReminders(
                 for: bill,
@@ -46,7 +56,11 @@ enum BillOperations {
         if let user = defaultUser(context: context, createIfMissing: true) {
             user.lastReminderReconciledAt = now
         }
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            reportCriticalError(error, operation: "saving reminder reconciliation changes")
+        }
     }
 
     static func addBill(
@@ -65,7 +79,7 @@ enum BillOperations {
             dueDateRule: draft.dueDateRule,
             billingCadence: cadenceFields.cadence,
             annualDueMonth: cadenceFields.annualDueMonth,
-            currency: "SGD",
+            currency: Locale.current.currencyCode ?? "SGD",
             expectedAmount: draft.expectedAmount,
             autopayEnabled: draft.autopayEnabled,
             autopayNote: draft.autopayNote,
@@ -461,7 +475,13 @@ enum BillOperations {
 
     private static func ensureDefaultUser(context: ModelContext) {
         let descriptor = FetchDescriptor<UserProfile>()
-        let users = (try? context.fetch(descriptor)) ?? []
+        let users: [UserProfile]
+        do {
+            users = try context.fetch(descriptor)
+        } catch {
+            reportCriticalError(error, operation: "fetching users while ensuring default user")
+            return
+        }
         guard users.isEmpty else { return }
 
         let user = UserProfile(
@@ -476,7 +496,12 @@ enum BillOperations {
             ensureDefaultUser(context: context)
         }
         let descriptor = FetchDescriptor<UserProfile>()
-        return (try? context.fetch(descriptor))?.first
+        do {
+            return try context.fetch(descriptor).first
+        } catch {
+            reportCriticalError(error, operation: "fetching default user")
+            return nil
+        }
     }
 
     private static func cancelPendingReminders(
@@ -521,15 +546,32 @@ enum BillOperations {
 
         if environment["UITEST_RESET"] == "1" {
             let descriptor = FetchDescriptor<BillItem>()
-            let existingBills = (try? context.fetch(descriptor)) ?? []
+            let existingBills: [BillItem]
+            do {
+                existingBills = try context.fetch(descriptor)
+            } catch {
+                reportCriticalError(error, operation: "fetching bills for UITest reset")
+                return
+            }
             for bill in existingBills {
                 context.delete(bill)
             }
-            try? context.save()
+            do {
+                try context.save()
+            } catch {
+                reportCriticalError(error, operation: "saving UITest reset deletions")
+                return
+            }
         }
 
         let descriptor = FetchDescriptor<BillItem>()
-        let bills = (try? context.fetch(descriptor)) ?? []
+        let bills: [BillItem]
+        do {
+            bills = try context.fetch(descriptor)
+        } catch {
+            reportCriticalError(error, operation: "fetching bills before UITest seeding")
+            return
+        }
         guard bills.isEmpty else { return }
 
         var utilityDraft = BillDraft()
@@ -563,13 +605,23 @@ enum BillOperations {
 
         let drafts = [utilityDraft, telcoDraft, cardDraft, subscriptionDraft]
         for draft in drafts {
-            _ = try? await addBill(
-                draft: draft,
-                context: context,
-                notificationService: notificationService,
-                now: now,
-                timeZone: timeZone
-            )
+            do {
+                _ = try await addBill(
+                    draft: draft,
+                    context: context,
+                    notificationService: notificationService,
+                    now: now,
+                    timeZone: timeZone
+                )
+            } catch {
+                reportCriticalError(error, operation: "adding UITest seed bill \(draft.providerName)")
+            }
         }
+    }
+
+    private static func reportCriticalError(_ error: Error, operation: String) {
+        let message = "BillOperations critical failure while \(operation): \(error.localizedDescription)"
+        assertionFailure(message)
+        NSLog("%@", message)
     }
 }

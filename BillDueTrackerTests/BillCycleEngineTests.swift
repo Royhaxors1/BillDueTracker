@@ -52,9 +52,16 @@ final class BillCycleEngineTests: XCTestCase {
             in: timeZone
         )
 
-        XCTAssertEqual(plans.count, 1)
-        XCTAssertEqual(plans.first?.stage, .overdue)
-        XCTAssertNotNil(plans.first?.scheduledAt)
+        XCTAssertEqual(plans.count, BillCycleEngine.overdueReminderLookaheadDays)
+        XCTAssertTrue(plans.allSatisfy { $0.stage == .overdue })
+
+        let expectedStart = BillCycleEngine.nextDailyReminderSlot(after: now, in: timeZone)
+        XCTAssertEqual(plans.first?.scheduledAt, expectedStart)
+
+        for (index, plan) in plans.enumerated() {
+            let expectedDate = expectedStart.addingDays(index, in: timeZone)
+            XCTAssertEqual(plan.scheduledAt, expectedDate)
+        }
     }
 
     func testReminderPlansRespectEnabledStages() {

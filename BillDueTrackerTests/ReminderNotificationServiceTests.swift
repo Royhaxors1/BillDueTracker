@@ -56,6 +56,38 @@ final class ReminderNotificationServiceTests: XCTestCase {
 
         XCTAssertNil(service.nextTriggerDate(from: request))
     }
+
+    func testOverdueReminderSchedulesOneShotCalendarTrigger() async throws {
+        let center = FakeNotificationCenter()
+        let service = ReminderNotificationService(center: center)
+
+        let bill = BillItem(
+            category: .utilityBill,
+            providerName: "SP Group",
+            nickname: "Home",
+            dueDay: 12
+        )
+        let cycle = BillCycle(
+            cycleMonth: "2026-03",
+            dueDate: Date(timeIntervalSince1970: 1_700_000_000),
+            reminderState: .overdue,
+            paymentState: .unpaid,
+            billItem: bill
+        )
+        let event = ReminderEvent(
+            stage: .overdue,
+            scheduledAt: Date(timeIntervalSince1970: 1_700_100_000),
+            deliveryStatus: .pending,
+            billCycle: cycle
+        )
+
+        await service.schedule(event: event, for: bill)
+
+        XCTAssertEqual(center.addedRequests.count, 1)
+        let request = try XCTUnwrap(center.addedRequests.first)
+        let trigger = try XCTUnwrap(request.trigger as? UNCalendarNotificationTrigger)
+        XCTAssertFalse(trigger.repeats)
+    }
 }
 
 @MainActor
