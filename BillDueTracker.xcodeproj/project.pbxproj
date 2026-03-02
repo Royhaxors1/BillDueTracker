@@ -1,0 +1,765 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0ADFD2FCC9E81C3E7B89F626 /* SharedUIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340C652DF0115A52DB76367B /* SharedUIComponents.swift */; };
+		108BC7B34D9E5E1349CB6542 /* BillCSVExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4172DA179B12C8986D3DB626 /* BillCSVExportService.swift */; };
+		126310F4780658CD3BE655A3 /* AttachmentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D298A945620283B2D5C9AA0F /* AttachmentStore.swift */; };
+		1421847779DBE2E7D101394B /* BillDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D397160881F3C696D3B8EE8 /* BillDetailView.swift */; };
+		1BDCAE61CCC3F763D3479D68 /* BillOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB0BCFC197B822F7066C7C2 /* BillOperations.swift */; };
+		1C6CD52BF878CFDFD3F6B99F /* SGProviderCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28543444ACCFF27D0E762F9C /* SGProviderCatalog.swift */; };
+		1D54CDF8CF3ECCB07E0ACE18 /* ReminderNotificationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214BBE4C9A4DA40046AA0AB8 /* ReminderNotificationServiceTests.swift */; };
+		1FFE9D714FB273DFCA314DBB /* BillDueTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C21E390B6569836EED23D9 /* BillDueTrackerApp.swift */; };
+		21221D63EFD9E881C1FFAECC /* UpgradeBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86AF3E7ACCFDA70D06E1EE0B /* UpgradeBanner.swift */; };
+		2474F0C37D68E5E5BB185F75 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E863AD7833BC19D970601515 /* TimelineView.swift */; };
+		2596CDE70D50E618EB5317D4 /* BillDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFC8C96A14FEF798A3D41D7 /* BillDraft.swift */; };
+		266432041F9BC3E09ABF0519 /* BillItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B2A7D63DCDD56B943D3189 /* BillItem.swift */; };
+		2B3FC1CE26E543152B9DA843 /* BillEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCFCD1E5B781ADECCD7AEA32 /* BillEnums.swift */; };
+		2DA3FF84447F7F7072D4588C /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE07E2DCC38C926FE920A48C /* RootTabView.swift */; };
+		31B7A8D4F0DB12C20CF98DA3 /* BillCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F7BE6BD378ECBD3BFF89FC /* BillCycle.swift */; };
+		3281335644CA40B606F79B3C /* QuickAddBillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F03F0B985975574E59EB94 /* QuickAddBillView.swift */; };
+		3E67550D2F77E1E799743495 /* PaymentProof.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9000B705DE9D81F2FD5D3D38 /* PaymentProof.swift */; };
+		4117FC93F3DD8F8E31E394DE /* BillExtractionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437AA32870D42544EB6B1337 /* BillExtractionServiceTests.swift */; };
+		57926E78844E505BF4A5BBA7 /* ReminderNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E691E2315811823BB5969B /* ReminderNotificationService.swift */; };
+		5A78D28DEA628C4DF0A1658B /* BillDueTrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B533982F2640A571B8269928 /* BillDueTrackerUITests.swift */; };
+		671ADECC7B4FC6F66306DA97 /* UsageLimitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B9D00E8A4283A426710F0C /* UsageLimitService.swift */; };
+		67D550830E65821AEE1CF40A /* BackupServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F42AF137C73F7A7251F3134 /* BackupServiceTests.swift */; };
+		6BADF58F996842526ABF67C7 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CFDE24FCE4E7E4EB2C562F /* DesignTokens.swift */; };
+		6C715EF9DA8DBB7BA13B5A72 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96088A03585771883AC91E66 /* PaywallView.swift */; };
+		723CBC473460CC503A3AEC78 /* Date+Cycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF9BA665E1172784D12E9DD /* Date+Cycle.swift */; };
+		74E519A7F6893CBCAE23BF08 /* SubscriptionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1EEAA1B7CBB6DD83932FB7 /* SubscriptionModel.swift */; };
+		76E6BE54ADDFFEE4C02E4381 /* ReminderRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3B6CF7A64AB333D840C5D7 /* ReminderRowView.swift */; };
+		7AE57D23865A562DFFFF7119 /* ReminderEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85E85A55244B4E9ECE39625 /* ReminderEvent.swift */; };
+		7D5BB36B3E2F8CEE2290089D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532DC6A1D46A5D73053CCCC8 /* AppDelegate.swift */; };
+		898B1070859D5572A28AEF33 /* ProviderActionSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C662889B9823EA3A7F2F0AA /* ProviderActionSeeder.swift */; };
+		8CA4EC4F4D1593A12A8B9D48 /* BillCSVExportServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4FE2A5C631703A3E88F9B9 /* BillCSVExportServiceTests.swift */; };
+		9D3ED1EBCF4A3447E9C442D1 /* AppBootstrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8782E04D8C7A41D396458C5F /* AppBootstrapper.swift */; };
+		AB792592BC2E23BA7C34370D /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B78B5A3F0DEC297B2AF63C88 /* UserProfile.swift */; };
+		AE30186CABBD15ED5CE25B70 /* BillCycleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B640B4819F08259AC641846 /* BillCycleEngine.swift */; };
+		B7DA30C046F5F9CC8D7A1FB0 /* BillCycleEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B3AFDCDC8CAD3E0D89A101A /* BillCycleEngineTests.swift */; };
+		C3E641F782B0B93FC0211D47 /* BillExtractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4C0539F38F51CDAC6DE1A8 /* BillExtractionService.swift */; };
+		C5F2E040A3704A2D8C6A8D8F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E68F15653DE7B24AA72B81 /* SettingsView.swift */; };
+		C78B1A115E9BD89F7702397B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DCDE132E5020BE86F910015 /* Assets.xcassets */; };
+		D361F4C78CD4DF098EAA93DC /* EntitlementState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1636DCD9A1C601C13C96A91 /* EntitlementState.swift */; };
+		D94419C15492DE6FE9985E69 /* BackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8455BA99C66702AEDA400F /* BackupService.swift */; };
+		DBB5792072D09B0023CC29E6 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C2D7806316A21875553BFA /* DashboardView.swift */; };
+		E569BB59A2A2EC2CC673E882 /* EntitlementStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321C12AE0AA2E13B89E3E291 /* EntitlementStateTests.swift */; };
+		EC09D54DB6DC5C1C20990020 /* BillCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886E1E9504A8327F42431B12 /* BillCardView.swift */; };
+		F1556A2AEE97124366700430 /* BillStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52D1BA76F52419501DA74E8 /* BillStatusTests.swift */; };
+		F1B41A115D4D336E0228D156 /* UsageLimitServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D08AEB929397859BC8EFDA /* UsageLimitServiceTests.swift */; };
+		FF13313A8E8D435765980982 /* ProviderAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F5703AA67B3337EC9AA5CE /* ProviderAction.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		112E6AB4B3CA84466CD4D959 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5A8C3390701BDA4B4D242D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8E99EA84DF4AE6C257DC3D6C;
+			remoteInfo = BillDueTracker;
+		};
+		F4CFB7E5DB832B391E32B6C0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5A8C3390701BDA4B4D242D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8E99EA84DF4AE6C257DC3D6C;
+			remoteInfo = BillDueTracker;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		05B9D00E8A4283A426710F0C /* UsageLimitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageLimitService.swift; sourceTree = "<group>"; };
+		0F4C0539F38F51CDAC6DE1A8 /* BillExtractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillExtractionService.swift; sourceTree = "<group>"; };
+		214BBE4C9A4DA40046AA0AB8 /* ReminderNotificationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationServiceTests.swift; sourceTree = "<group>"; };
+		28543444ACCFF27D0E762F9C /* SGProviderCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SGProviderCatalog.swift; sourceTree = "<group>"; };
+		321C12AE0AA2E13B89E3E291 /* EntitlementStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementStateTests.swift; sourceTree = "<group>"; };
+		340C652DF0115A52DB76367B /* SharedUIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedUIComponents.swift; sourceTree = "<group>"; };
+		3C47ED1BDC73D7D0D3FDA46B /* BillDueTrackerUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BillDueTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C662889B9823EA3A7F2F0AA /* ProviderActionSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderActionSeeder.swift; sourceTree = "<group>"; };
+		3EB0BCFC197B822F7066C7C2 /* BillOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillOperations.swift; sourceTree = "<group>"; };
+		4172DA179B12C8986D3DB626 /* BillCSVExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillCSVExportService.swift; sourceTree = "<group>"; };
+		437AA32870D42544EB6B1337 /* BillExtractionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillExtractionServiceTests.swift; sourceTree = "<group>"; };
+		49C2D7806316A21875553BFA /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		4DCDE132E5020BE86F910015 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		532DC6A1D46A5D73053CCCC8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		6A4FE2A5C631703A3E88F9B9 /* BillCSVExportServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillCSVExportServiceTests.swift; sourceTree = "<group>"; };
+		6BFC8C96A14FEF798A3D41D7 /* BillDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillDraft.swift; sourceTree = "<group>"; };
+		72F5703AA67B3337EC9AA5CE /* ProviderAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderAction.swift; sourceTree = "<group>"; };
+		7B3AFDCDC8CAD3E0D89A101A /* BillCycleEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillCycleEngineTests.swift; sourceTree = "<group>"; };
+		7B3B6CF7A64AB333D840C5D7 /* ReminderRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderRowView.swift; sourceTree = "<group>"; };
+		7FF9BA665E1172784D12E9DD /* Date+Cycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Cycle.swift"; sourceTree = "<group>"; };
+		82F03F0B985975574E59EB94 /* QuickAddBillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddBillView.swift; sourceTree = "<group>"; };
+		86AF3E7ACCFDA70D06E1EE0B /* UpgradeBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeBanner.swift; sourceTree = "<group>"; };
+		8782E04D8C7A41D396458C5F /* AppBootstrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBootstrapper.swift; sourceTree = "<group>"; };
+		886E1E9504A8327F42431B12 /* BillCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillCardView.swift; sourceTree = "<group>"; };
+		8B640B4819F08259AC641846 /* BillCycleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillCycleEngine.swift; sourceTree = "<group>"; };
+		8D397160881F3C696D3B8EE8 /* BillDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillDetailView.swift; sourceTree = "<group>"; };
+		9000B705DE9D81F2FD5D3D38 /* PaymentProof.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentProof.swift; sourceTree = "<group>"; };
+		917A90375502CC6C7068FD40 /* BillDueTrackerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BillDueTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		96088A03585771883AC91E66 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		96E691E2315811823BB5969B /* ReminderNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderNotificationService.swift; sourceTree = "<group>"; };
+		99B2A7D63DCDD56B943D3189 /* BillItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillItem.swift; sourceTree = "<group>"; };
+		9F42AF137C73F7A7251F3134 /* BackupServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupServiceTests.swift; sourceTree = "<group>"; };
+		A0C21E390B6569836EED23D9 /* BillDueTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillDueTrackerApp.swift; sourceTree = "<group>"; };
+		A3D08AEB929397859BC8EFDA /* UsageLimitServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageLimitServiceTests.swift; sourceTree = "<group>"; };
+		B52D1BA76F52419501DA74E8 /* BillStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillStatusTests.swift; sourceTree = "<group>"; };
+		B533982F2640A571B8269928 /* BillDueTrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillDueTrackerUITests.swift; sourceTree = "<group>"; };
+		B78B5A3F0DEC297B2AF63C88 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		BF1EEAA1B7CBB6DD83932FB7 /* SubscriptionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionModel.swift; sourceTree = "<group>"; };
+		C0CFDE24FCE4E7E4EB2C562F /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokens.swift; sourceTree = "<group>"; };
+		C1636DCD9A1C601C13C96A91 /* EntitlementState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementState.swift; sourceTree = "<group>"; };
+		C7E68F15653DE7B24AA72B81 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C85E85A55244B4E9ECE39625 /* ReminderEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderEvent.swift; sourceTree = "<group>"; };
+		D298A945620283B2D5C9AA0F /* AttachmentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentStore.swift; sourceTree = "<group>"; };
+		D53B6227FAAADDB409CA6AB5 /* BillDueTracker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BillDueTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD8455BA99C66702AEDA400F /* BackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupService.swift; sourceTree = "<group>"; };
+		E863AD7833BC19D970601515 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
+		F3F7BE6BD378ECBD3BFF89FC /* BillCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillCycle.swift; sourceTree = "<group>"; };
+		FCFCD1E5B781ADECCD7AEA32 /* BillEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillEnums.swift; sourceTree = "<group>"; };
+		FE07E2DCC38C926FE920A48C /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0CED8668ED02AB067BA69A39 /* BillDueTrackerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				B533982F2640A571B8269928 /* BillDueTrackerUITests.swift */,
+			);
+			path = BillDueTrackerUITests;
+			sourceTree = "<group>";
+		};
+		1EF9454BC56102D2972BA4E2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4DCDE132E5020BE86F910015 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		2163884821E781FC277AF014 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8D397160881F3C696D3B8EE8 /* BillDetailView.swift */,
+				49C2D7806316A21875553BFA /* DashboardView.swift */,
+				96088A03585771883AC91E66 /* PaywallView.swift */,
+				82F03F0B985975574E59EB94 /* QuickAddBillView.swift */,
+				FE07E2DCC38C926FE920A48C /* RootTabView.swift */,
+				C7E68F15653DE7B24AA72B81 /* SettingsView.swift */,
+				E863AD7833BC19D970601515 /* TimelineView.swift */,
+				4F21E00D2309875F62A083BE /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4DEC17F16168B3C30F83FAE5 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				7FF9BA665E1172784D12E9DD /* Date+Cycle.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		4F21E00D2309875F62A083BE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				886E1E9504A8327F42431B12 /* BillCardView.swift */,
+				7B3B6CF7A64AB333D840C5D7 /* ReminderRowView.swift */,
+				340C652DF0115A52DB76367B /* SharedUIComponents.swift */,
+				86AF3E7ACCFDA70D06E1EE0B /* UpgradeBanner.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		53ADAD3A8D8113A7E755995A = {
+			isa = PBXGroup;
+			children = (
+				FE5D6F4B99AB599DA884B75E /* BillDueTracker */,
+				86F0862789ECFFDA9E4837A5 /* BillDueTrackerTests */,
+				0CED8668ED02AB067BA69A39 /* BillDueTrackerUITests */,
+				A7A79C3AD9062DCCC82E6D52 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5C9CEA4D6F0C13C59E2812CD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F3F7BE6BD378ECBD3BFF89FC /* BillCycle.swift */,
+				6BFC8C96A14FEF798A3D41D7 /* BillDraft.swift */,
+				FCFCD1E5B781ADECCD7AEA32 /* BillEnums.swift */,
+				99B2A7D63DCDD56B943D3189 /* BillItem.swift */,
+				9000B705DE9D81F2FD5D3D38 /* PaymentProof.swift */,
+				72F5703AA67B3337EC9AA5CE /* ProviderAction.swift */,
+				C85E85A55244B4E9ECE39625 /* ReminderEvent.swift */,
+				BF1EEAA1B7CBB6DD83932FB7 /* SubscriptionModel.swift */,
+				B78B5A3F0DEC297B2AF63C88 /* UserProfile.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6FBEEC42043E622CD5040469 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				C0CFDE24FCE4E7E4EB2C562F /* DesignTokens.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		86F0862789ECFFDA9E4837A5 /* BillDueTrackerTests */ = {
+			isa = PBXGroup;
+			children = (
+				9F42AF137C73F7A7251F3134 /* BackupServiceTests.swift */,
+				6A4FE2A5C631703A3E88F9B9 /* BillCSVExportServiceTests.swift */,
+				7B3AFDCDC8CAD3E0D89A101A /* BillCycleEngineTests.swift */,
+				437AA32870D42544EB6B1337 /* BillExtractionServiceTests.swift */,
+				B52D1BA76F52419501DA74E8 /* BillStatusTests.swift */,
+				321C12AE0AA2E13B89E3E291 /* EntitlementStateTests.swift */,
+				214BBE4C9A4DA40046AA0AB8 /* ReminderNotificationServiceTests.swift */,
+				A3D08AEB929397859BC8EFDA /* UsageLimitServiceTests.swift */,
+			);
+			path = BillDueTrackerTests;
+			sourceTree = "<group>";
+		};
+		9263360036BCD49FEAE06D29 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8782E04D8C7A41D396458C5F /* AppBootstrapper.swift */,
+				D298A945620283B2D5C9AA0F /* AttachmentStore.swift */,
+				DD8455BA99C66702AEDA400F /* BackupService.swift */,
+				4172DA179B12C8986D3DB626 /* BillCSVExportService.swift */,
+				8B640B4819F08259AC641846 /* BillCycleEngine.swift */,
+				0F4C0539F38F51CDAC6DE1A8 /* BillExtractionService.swift */,
+				3EB0BCFC197B822F7066C7C2 /* BillOperations.swift */,
+				C1636DCD9A1C601C13C96A91 /* EntitlementState.swift */,
+				3C662889B9823EA3A7F2F0AA /* ProviderActionSeeder.swift */,
+				96E691E2315811823BB5969B /* ReminderNotificationService.swift */,
+				28543444ACCFF27D0E762F9C /* SGProviderCatalog.swift */,
+				05B9D00E8A4283A426710F0C /* UsageLimitService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A7A79C3AD9062DCCC82E6D52 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D53B6227FAAADDB409CA6AB5 /* BillDueTracker.app */,
+				917A90375502CC6C7068FD40 /* BillDueTrackerTests.xctest */,
+				3C47ED1BDC73D7D0D3FDA46B /* BillDueTrackerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F1D2BB850FA637B032035B0F /* App */ = {
+			isa = PBXGroup;
+			children = (
+				532DC6A1D46A5D73053CCCC8 /* AppDelegate.swift */,
+				A0C21E390B6569836EED23D9 /* BillDueTrackerApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		FE5D6F4B99AB599DA884B75E /* BillDueTracker */ = {
+			isa = PBXGroup;
+			children = (
+				F1D2BB850FA637B032035B0F /* App */,
+				6FBEEC42043E622CD5040469 /* Design */,
+				5C9CEA4D6F0C13C59E2812CD /* Models */,
+				1EF9454BC56102D2972BA4E2 /* Resources */,
+				9263360036BCD49FEAE06D29 /* Services */,
+				4DEC17F16168B3C30F83FAE5 /* Utilities */,
+				2163884821E781FC277AF014 /* Views */,
+			);
+			path = BillDueTracker;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		155E23C46124F09445837ED7 /* BillDueTrackerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0AE6D217E43DBDEFD6BD1C3F /* Build configuration list for PBXNativeTarget "BillDueTrackerTests" */;
+			buildPhases = (
+				2CF0DDFA331EFEF66C7C5E0B /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E3C342058138C533556F7628 /* PBXTargetDependency */,
+			);
+			name = BillDueTrackerTests;
+			packageProductDependencies = (
+			);
+			productName = BillDueTrackerTests;
+			productReference = 917A90375502CC6C7068FD40 /* BillDueTrackerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8E99EA84DF4AE6C257DC3D6C /* BillDueTracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6AAF71732003C1685B31AC4F /* Build configuration list for PBXNativeTarget "BillDueTracker" */;
+			buildPhases = (
+				8BC5AF66B6834D8DC908B7C3 /* Sources */,
+				45D8AB04516AE98211A0A943 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BillDueTracker;
+			packageProductDependencies = (
+			);
+			productName = BillDueTracker;
+			productReference = D53B6227FAAADDB409CA6AB5 /* BillDueTracker.app */;
+			productType = "com.apple.product-type.application";
+		};
+		964F15232031555267966B59 /* BillDueTrackerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 71DC7479A6A24216D6C44E08 /* Build configuration list for PBXNativeTarget "BillDueTrackerUITests" */;
+			buildPhases = (
+				E4925C3C5BC1A0C923D2549F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2BE59D6E0858D02B3A134095 /* PBXTargetDependency */,
+			);
+			name = BillDueTrackerUITests;
+			packageProductDependencies = (
+			);
+			productName = BillDueTrackerUITests;
+			productReference = 3C47ED1BDC73D7D0D3FDA46B /* BillDueTrackerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CE5A8C3390701BDA4B4D242D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					155E23C46124F09445837ED7 = {
+						DevelopmentTeam = 7666K4PN94;
+					};
+					8E99EA84DF4AE6C257DC3D6C = {
+						DevelopmentTeam = 7666K4PN94;
+					};
+					964F15232031555267966B59 = {
+						DevelopmentTeam = 7666K4PN94;
+						TestTargetID = 8E99EA84DF4AE6C257DC3D6C;
+					};
+				};
+			};
+			buildConfigurationList = 832750D84A33F9F5543942D4 /* Build configuration list for PBXProject "BillDueTracker" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 53ADAD3A8D8113A7E755995A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8E99EA84DF4AE6C257DC3D6C /* BillDueTracker */,
+				155E23C46124F09445837ED7 /* BillDueTrackerTests */,
+				964F15232031555267966B59 /* BillDueTrackerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		45D8AB04516AE98211A0A943 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C78B1A115E9BD89F7702397B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2CF0DDFA331EFEF66C7C5E0B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				67D550830E65821AEE1CF40A /* BackupServiceTests.swift in Sources */,
+				8CA4EC4F4D1593A12A8B9D48 /* BillCSVExportServiceTests.swift in Sources */,
+				B7DA30C046F5F9CC8D7A1FB0 /* BillCycleEngineTests.swift in Sources */,
+				4117FC93F3DD8F8E31E394DE /* BillExtractionServiceTests.swift in Sources */,
+				F1556A2AEE97124366700430 /* BillStatusTests.swift in Sources */,
+				E569BB59A2A2EC2CC673E882 /* EntitlementStateTests.swift in Sources */,
+				1D54CDF8CF3ECCB07E0ACE18 /* ReminderNotificationServiceTests.swift in Sources */,
+				F1B41A115D4D336E0228D156 /* UsageLimitServiceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8BC5AF66B6834D8DC908B7C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D3ED1EBCF4A3447E9C442D1 /* AppBootstrapper.swift in Sources */,
+				7D5BB36B3E2F8CEE2290089D /* AppDelegate.swift in Sources */,
+				126310F4780658CD3BE655A3 /* AttachmentStore.swift in Sources */,
+				D94419C15492DE6FE9985E69 /* BackupService.swift in Sources */,
+				108BC7B34D9E5E1349CB6542 /* BillCSVExportService.swift in Sources */,
+				EC09D54DB6DC5C1C20990020 /* BillCardView.swift in Sources */,
+				31B7A8D4F0DB12C20CF98DA3 /* BillCycle.swift in Sources */,
+				AE30186CABBD15ED5CE25B70 /* BillCycleEngine.swift in Sources */,
+				1421847779DBE2E7D101394B /* BillDetailView.swift in Sources */,
+				2596CDE70D50E618EB5317D4 /* BillDraft.swift in Sources */,
+				1FFE9D714FB273DFCA314DBB /* BillDueTrackerApp.swift in Sources */,
+				2B3FC1CE26E543152B9DA843 /* BillEnums.swift in Sources */,
+				C3E641F782B0B93FC0211D47 /* BillExtractionService.swift in Sources */,
+				266432041F9BC3E09ABF0519 /* BillItem.swift in Sources */,
+				1BDCAE61CCC3F763D3479D68 /* BillOperations.swift in Sources */,
+				DBB5792072D09B0023CC29E6 /* DashboardView.swift in Sources */,
+				723CBC473460CC503A3AEC78 /* Date+Cycle.swift in Sources */,
+				6BADF58F996842526ABF67C7 /* DesignTokens.swift in Sources */,
+				D361F4C78CD4DF098EAA93DC /* EntitlementState.swift in Sources */,
+				3E67550D2F77E1E799743495 /* PaymentProof.swift in Sources */,
+				6C715EF9DA8DBB7BA13B5A72 /* PaywallView.swift in Sources */,
+				FF13313A8E8D435765980982 /* ProviderAction.swift in Sources */,
+				898B1070859D5572A28AEF33 /* ProviderActionSeeder.swift in Sources */,
+				3281335644CA40B606F79B3C /* QuickAddBillView.swift in Sources */,
+				7AE57D23865A562DFFFF7119 /* ReminderEvent.swift in Sources */,
+				57926E78844E505BF4A5BBA7 /* ReminderNotificationService.swift in Sources */,
+				76E6BE54ADDFFEE4C02E4381 /* ReminderRowView.swift in Sources */,
+				2DA3FF84447F7F7072D4588C /* RootTabView.swift in Sources */,
+				1C6CD52BF878CFDFD3F6B99F /* SGProviderCatalog.swift in Sources */,
+				C5F2E040A3704A2D8C6A8D8F /* SettingsView.swift in Sources */,
+				0ADFD2FCC9E81C3E7B89F626 /* SharedUIComponents.swift in Sources */,
+				74E519A7F6893CBCAE23BF08 /* SubscriptionModel.swift in Sources */,
+				2474F0C37D68E5E5BB185F75 /* TimelineView.swift in Sources */,
+				21221D63EFD9E881C1FFAECC /* UpgradeBanner.swift in Sources */,
+				671ADECC7B4FC6F66306DA97 /* UsageLimitService.swift in Sources */,
+				AB792592BC2E23BA7C34370D /* UserProfile.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E4925C3C5BC1A0C923D2549F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5A78D28DEA628C4DF0A1658B /* BillDueTrackerUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2BE59D6E0858D02B3A134095 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8E99EA84DF4AE6C257DC3D6C /* BillDueTracker */;
+			targetProxy = 112E6AB4B3CA84466CD4D959 /* PBXContainerItemProxy */;
+		};
+		E3C342058138C533556F7628 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8E99EA84DF4AE6C257DC3D6C /* BillDueTracker */;
+			targetProxy = F4CFB7E5DB832B391E32B6C0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1438E7F5E01F76B239F5F03C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Bill Due Tracker";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Bill Due Tracker uses your camera to capture bill and payment proof images.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Bill Due Tracker uses your photo library so you can attach payment proof images.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = NO;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcuschin.BillDueTracker;
+				PRODUCT_NAME = BillDueTracker;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		25E552C96E548E1652BB4BDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcuschin.BillDueTrackerUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BillDueTracker;
+			};
+			name = Release;
+		};
+		978A33DC6EE878EC1B58604C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 7666K4PN94;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		A1BCC84D7EA6C8577159AB42 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcuschin.BillDueTrackerUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BillDueTracker;
+			};
+			name = Debug;
+		};
+		B3C5F04A4AEF6CF91B5FAD90 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 7666K4PN94;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		C780D04B79C0658124546591 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcuschin.BillDueTrackerTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BillDueTracker.app/BillDueTracker";
+			};
+			name = Debug;
+		};
+		D6048129C7318C781EB78342 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Bill Due Tracker";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Bill Due Tracker uses your camera to capture bill and payment proof images.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Bill Due Tracker uses your photo library so you can attach payment proof images.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = NO;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcuschin.BillDueTracker;
+				PRODUCT_NAME = BillDueTracker;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DE8654D6520E5A566BC4C638 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcuschin.BillDueTrackerTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BillDueTracker.app/BillDueTracker";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0AE6D217E43DBDEFD6BD1C3F /* Build configuration list for PBXNativeTarget "BillDueTrackerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C780D04B79C0658124546591 /* Debug */,
+				DE8654D6520E5A566BC4C638 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6AAF71732003C1685B31AC4F /* Build configuration list for PBXNativeTarget "BillDueTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6048129C7318C781EB78342 /* Debug */,
+				1438E7F5E01F76B239F5F03C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		71DC7479A6A24216D6C44E08 /* Build configuration list for PBXNativeTarget "BillDueTrackerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1BCC84D7EA6C8577159AB42 /* Debug */,
+				25E552C96E548E1652BB4BDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		832750D84A33F9F5543942D4 /* Build configuration list for PBXProject "BillDueTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C5F04A4AEF6CF91B5FAD90 /* Debug */,
+				978A33DC6EE878EC1B58604C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CE5A8C3390701BDA4B4D242D /* Project object */;
+}

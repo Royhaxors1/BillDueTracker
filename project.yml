@@ -1,0 +1,69 @@
+name: BillDueTracker
+options:
+  bundleIdPrefix: com.marcuschin
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16.0"
+  minimumXcodeGenVersion: "2.38"
+settings:
+  SWIFT_VERSION: "5.9"
+  DEVELOPMENT_TEAM: "7666K4PN94"
+targets:
+  BillDueTracker:
+    type: application
+    platform: iOS
+    sources:
+      - path: BillDueTracker
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.marcuschin.BillDueTracker
+      PRODUCT_NAME: BillDueTracker
+      INFOPLIST_KEY_CFBundleDisplayName: "Bill Due Tracker"
+      INFOPLIST_KEY_CFBundleIconName: "AppIcon"
+      MARKETING_VERSION: "1.0"
+      CURRENT_PROJECT_VERSION: "3"
+      INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+      INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+      INFOPLIST_KEY_UILaunchScreen_Generation: YES
+      INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait"
+      INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+      INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Bill Due Tracker uses your photo library so you can attach payment proof images."
+      INFOPLIST_KEY_NSCameraUsageDescription: "Bill Due Tracker uses your camera to capture bill and payment proof images."
+      INFOPLIST_KEY_NSSupportsLiveActivities: NO
+      ENABLE_PREVIEWS: YES
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+  BillDueTrackerTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: BillDueTrackerTests
+        excludes:
+          - "**/.DS_Store"
+    dependencies:
+      - target: BillDueTracker
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+  BillDueTrackerUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: BillDueTrackerUITests
+        excludes:
+          - "**/.DS_Store"
+    dependencies:
+      - target: BillDueTracker
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      TEST_TARGET_NAME: BillDueTracker
+schemes:
+  BillDueTracker:
+    build:
+      targets:
+        BillDueTracker: all
+    test:
+      targets:
+        - BillDueTrackerTests
+        - BillDueTrackerUITests
