@@ -313,6 +313,10 @@ struct SettingsView: View {
                 .padding(.top, AppTheme.Spacing.md)
                 .padding(.bottom, AppTheme.Spacing.xl)
             }
+            .safeAreaInset(edge: .bottom) {
+                Color.clear
+                    .frame(height: AppTheme.Spacing.lg)
+            }
             .appScreenBackground()
             .navigationTitle("Settings")
             .task {

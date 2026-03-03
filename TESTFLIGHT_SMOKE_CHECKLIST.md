@@ -3,7 +3,7 @@
 Build target:
 - App: `BillDueTracker`
 - Expected marketing version: `1.0`
-- Expected build number: `3`
+- Expected build number: `5`
 
 Tester/device:
 - Tester name:

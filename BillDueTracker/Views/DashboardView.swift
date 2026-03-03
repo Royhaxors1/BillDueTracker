@@ -28,7 +28,7 @@ struct DashboardView: View {
     private static let amountFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.currencyCode = Locale.current.currencyCode ?? "SGD"
+        formatter.currencyCode = Locale.current.currency?.identifier ?? "SGD"
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
         return formatter
@@ -175,6 +175,10 @@ struct DashboardView: View {
                 .padding(.bottom, AppTheme.Spacing.xl)
                 .animation(.snappy(duration: 0.3), value: bills.count)
             }
+            .safeAreaInset(edge: .bottom) {
+                Color.clear
+                    .frame(height: AppTheme.Spacing.lg)
+            }
             .appScreenBackground()
             .navigationTitle("Bill Due Tracker")
             .toolbar {
@@ -261,18 +265,32 @@ struct DashboardView: View {
                         onDelete: { pendingDeletionBill = bill },
                         actionAccessibilityIdentifier: "dashboard.swipeDelete"
                     ) {
-                        VStack(spacing: AppTheme.Spacing.xs) {
-                            NavigationLink(value: BillNavigationTarget(billID: bill.id, cycleID: cycle.id)) {
-                                BillCardView(bill: bill, cycle: cycle)
-                            }
-                            .buttonStyle(.plain)
-
-                            cardQuickActions(bill: bill, cycle: cycle)
-                        }
+                        dashboardRow(bill: bill, cycle: cycle)
                     }
                 }
             }
         }
+    }
+
+    private func dashboardRow(bill: BillItem, cycle: BillCycle) -> some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
+            NavigationLink(value: BillNavigationTarget(billID: bill.id, cycleID: cycle.id)) {
+                BillCardView(bill: bill, cycle: cycle, showContainer: false)
+            }
+            .buttonStyle(.plain)
+
+            Divider()
+                .overlay(AppTheme.Colors.hairline)
+
+            cardQuickActions(bill: bill, cycle: cycle)
+        }
+        .padding(AppTheme.Spacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
+                .fill(AppTheme.Colors.surfaceElevated)
+        )
+        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: AppTheme.Border.standard)
     }
 
     @ViewBuilder
