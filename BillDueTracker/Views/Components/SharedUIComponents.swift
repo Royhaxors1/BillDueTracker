@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SectionCard<Content: View>: View {
     let title: String
@@ -183,26 +184,46 @@ struct SwipeToDeleteContainer<Content: View>: View {
     @State private var contentOffset: CGFloat = 0
     @State private var isOpen = false
     @State private var isHorizontalDrag = false
+    @State private var crossedOpenThreshold = false
 
-    private let actionWidth: CGFloat = 92
-    private let openThreshold: CGFloat = 36
+    private let actionWidth: CGFloat = 96
+    private let openThreshold: CGFloat = 38
+    private let closeThreshold: CGFloat = 58
+    private let dragDamping: CGFloat = 0.28
+    private let revealStartThreshold: CGFloat = 0.12
+    private let settleAnimation = Animation.spring(response: 0.26, dampingFraction: 0.86)
+
+    private var revealProgress: CGFloat {
+        min(1, max(0, -contentOffset / actionWidth))
+    }
+
+    private var visibleRevealProgress: CGFloat {
+        guard revealProgress > revealStartThreshold else { return 0 }
+        return min(1, (revealProgress - revealStartThreshold) / (1 - revealStartThreshold))
+    }
 
     var body: some View {
         ZStack(alignment: .trailing) {
             Button(role: .destructive, action: onDelete) {
-                VStack(spacing: AppTheme.Spacing.xxs) {
+                VStack(spacing: AppTheme.Spacing.xs) {
                     Image(systemName: "trash.fill")
+                        .font(.subheadline.weight(.bold))
+                        .frame(width: 28, height: 28)
+                        .background(Color.white.opacity(0.14 * visibleRevealProgress))
+                        .clipShape(Circle())
                     Text("Delete")
-                        .font(.caption.weight(.semibold))
+                        .font(.caption.weight(.bold))
                 }
                 .frame(width: actionWidth)
                 .frame(maxHeight: .infinity)
-                .foregroundStyle(.white)
-                .background(AppTheme.Colors.overdue)
+                .foregroundStyle(.white.opacity(visibleRevealProgress))
+                .background(AppTheme.Colors.overdue.opacity(visibleRevealProgress))
                 .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
+                .scaleEffect(0.92 + (0.08 * visibleRevealProgress))
+                .animation(.easeOut(duration: 0.16), value: visibleRevealProgress)
             }
             .buttonStyle(.plain)
-            .padding(.leading, AppTheme.Spacing.sm)
+            .allowsHitTesting(isOpen)
             .modifier(ConditionalAccessibilityIdentifier(identifier: actionAccessibilityIdentifier))
             .accessibilitySortPriority(0)
 
@@ -221,34 +242,59 @@ struct SwipeToDeleteContainer<Content: View>: View {
                             guard isHorizontalDrag else { return }
 
                             let baseline = isOpen ? -actionWidth : 0
-                            let nextOffset = baseline + value.translation.width
-                            contentOffset = min(0, max(-actionWidth, nextOffset))
+                            let rawOffset = baseline + value.translation.width
+                            contentOffset = dampedOffset(rawOffset)
+                            updateThresholdFeedback()
                         }
                         .onEnded { value in
                             defer { isHorizontalDrag = false }
                             guard isHorizontalDrag else { return }
 
-                            let predicted = (isOpen ? -actionWidth : 0) + value.predictedEndTranslation.width
-                            withAnimation(.spring(response: 0.22, dampingFraction: 0.88)) {
-                                if predicted < -openThreshold {
-                                    contentOffset = -actionWidth
-                                    isOpen = true
-                                } else {
-                                    contentOffset = 0
-                                    isOpen = false
-                                }
-                            }
+                            let baseline = isOpen ? -actionWidth : 0
+                            let predicted = dampedOffset(baseline + value.predictedEndTranslation.width)
+                            settle(toOpen: shouldSettleOpen(for: predicted))
                         }
                 )
                 .onTapGesture {
                     guard isOpen else { return }
-                    withAnimation(.spring(response: 0.22, dampingFraction: 0.88)) {
-                        contentOffset = 0
-                        isOpen = false
-                    }
+                    settle(toOpen: false)
                 }
         }
-        .clipped()
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
+    }
+
+    private func shouldSettleOpen(for predictedOffset: CGFloat) -> Bool {
+        if isOpen {
+            return predictedOffset < -closeThreshold
+        }
+        return predictedOffset < -openThreshold
+    }
+
+    private func settle(toOpen shouldOpen: Bool) {
+        crossedOpenThreshold = false
+        withAnimation(settleAnimation) {
+            contentOffset = shouldOpen ? -actionWidth : 0
+            isOpen = shouldOpen
+        }
+    }
+
+    private func dampedOffset(_ rawOffset: CGFloat) -> CGFloat {
+        if rawOffset > 0 {
+            return rawOffset * dragDamping
+        }
+        if rawOffset < -actionWidth {
+            let overDrag = rawOffset + actionWidth
+            return -actionWidth + (overDrag * dragDamping)
+        }
+        return rawOffset
+    }
+
+    private func updateThresholdFeedback() {
+        let hasCrossed = contentOffset <= -openThreshold
+        if hasCrossed, !crossedOpenThreshold {
+            UIImpactFeedbackGenerator(style: .soft).impactOccurred(intensity: 0.8)
+        }
+        crossedOpenThreshold = hasCrossed
     }
 }
 

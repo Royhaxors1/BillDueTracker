@@ -3,9 +3,35 @@ import SwiftUI
 struct BillCardView: View {
     let bill: BillItem
     let cycle: BillCycle?
+    let showContainer: Bool
     @ScaledMetric(relativeTo: .body) private var categoryIconSize: CGFloat = 32
 
+    init(bill: BillItem, cycle: BillCycle?, showContainer: Bool = true) {
+        self.bill = bill
+        self.cycle = cycle
+        self.showContainer = showContainer
+    }
+
     var body: some View {
+        Group {
+            if showContainer {
+                cardContent
+                    .padding(AppTheme.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
+                            .fill(AppTheme.Colors.surface)
+                    )
+                    .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: AppTheme.Border.elevated)
+            } else {
+                cardContent
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilitySummary)
+    }
+
+    private var cardContent: some View {
         HStack(alignment: .top, spacing: AppTheme.Spacing.sm) {
             Image(systemName: bill.category.symbolName)
                 .font(.headline.weight(.semibold))
@@ -44,15 +70,6 @@ struct BillCardView: View {
                 }
             }
         }
-        .padding(AppTheme.Spacing.md)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
-                .fill(AppTheme.Colors.surface)
-        )
-        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: AppTheme.Border.elevated)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(accessibilitySummary)
     }
 
     private var statusText: String {

@@ -2,26 +2,30 @@
 
 This runbook is strict and hard-cutover by design.
 
+Last updated: March 3, 2026
+
 ## 1) Release Config (Repo)
 - [x] `DEVELOPMENT_TEAM` set in `project.yml`
 - [x] `MARKETING_VERSION` confirmed for release (`1.0`)
-- [x] `CURRENT_PROJECT_VERSION` confirmed for release (`2`)
+- [x] `CURRENT_PROJECT_VERSION` confirmed for release (`5`)
 - [x] `xcodegen generate` executed after config changes
 
 ## 2) Preflight Verification
 - [x] `make ios-verify` passes (build + all tests)
 
 ## 3) StoreKit Production Readiness (App Store Connect)
-- [ ] Monthly product exists: `com.marcuschin.billduetracker.pro.monthly`
-- [ ] Annual product exists: `com.marcuschin.billduetracker.pro.annual`
-- [ ] Products are in the same subscription group
-- [ ] Price + territory + trial config confirmed
-- [ ] Review metadata/screenshots for subscriptions completed
+- [x] Monthly product exists: `com.marcuschin.billduetracker.pro.monthly`
+- [x] Annual product exists: `com.marcuschin.billduetracker.pro.annual`
+- [x] Products are in the same subscription group
+- [x] Price + territory + trial config confirmed
+- [x] Review metadata/screenshots for subscriptions completed
 
 ## 4) Compliance / Metadata (App Store Connect)
-- [ ] Privacy policy URL set
-- [ ] Terms/support links set
-- [ ] Subscription disclosure text is complete and consistent
+- [x] Privacy policy URL set
+- [x] Terms/support links set
+- [x] Subscription disclosure text is complete and consistent
+- [x] App Review contact phone set
+- [ ] Primary/secondary app categories set in App Store Connect UI
 
 ## 5) Archive + TestFlight
 - [x] Archive succeeds (generic iOS device)
@@ -44,10 +48,9 @@ This runbook is strict and hard-cutover by design.
 - Go only if every must-pass item above is green.
 - Any blocker is a hard stop and must be fixed before submission.
 
-## Current External Blockers (March 1, 2026)
-- Uploaded build is still processing in App Store Connect TestFlight.
-- StoreKit subscription products/metadata are still incomplete (Section 3).
-- Compliance metadata (privacy policy, terms/support) is still incomplete (Section 4).
+## Current External Blockers (March 3, 2026)
+- Build `1.0 (5)` is `VALID` in App Store Connect and assigned to internal group `Bills Tracking test`; internal install + smoke are still pending.
+- Primary/secondary app categories are currently unset and must be updated in App Store Connect UI.
 
 ## Local Commands
 ```bash

@@ -14,56 +14,10 @@ struct TimelineView: View {
     @State private var pendingDeletionBill: BillItem?
     @State private var quickActionErrorMessage: String?
 
-    private static let amountFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = Locale.current.currencyCode ?? "SGD"
-        formatter.maximumFractionDigits = 2
-        formatter.minimumFractionDigits = 2
-        return formatter
-    }()
-
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.lg) {
-                    SectionCard(
-                        title: "Month Snapshot",
-                        subtitle: selectedMonth.formatted(.dateTime.month(.wide).year())
-                    ) {
-                        VStack(spacing: AppTheme.Spacing.sm) {
-                            HStack(spacing: AppTheme.Spacing.sm) {
-                                snapshotStat(
-                                    title: "Bills",
-                                    value: "\(filteredCycles.count)",
-                                    systemImage: "tray.full.fill",
-                                    tone: .accent
-                                )
-                                snapshotStat(
-                                    title: "Unpaid",
-                                    value: "\(monthUnpaidCount)",
-                                    systemImage: "clock.fill",
-                                    tone: monthUnpaidCount > 0 ? .dueSoon : .paid
-                                )
-                            }
-
-                            HStack(spacing: AppTheme.Spacing.sm) {
-                                snapshotStat(
-                                    title: "Overdue",
-                                    value: "\(monthOverdueCount)",
-                                    systemImage: "exclamationmark.triangle.fill",
-                                    tone: monthOverdueCount > 0 ? .overdue : .neutral
-                                )
-                                snapshotStat(
-                                    title: "Due Amount",
-                                    value: formattedAmount(monthDueAmount),
-                                    systemImage: "dollarsign.circle.fill",
-                                    tone: .accent
-                                )
-                            }
-                        }
-                    }
-
                     SectionCard(
                         title: "Month",
                         subtitle: "Filter obligations by billing cycle."
@@ -110,25 +64,7 @@ struct TimelineView: View {
                                         },
                                         actionAccessibilityIdentifier: "timeline.swipeDelete"
                                     ) {
-                                        VStack(spacing: AppTheme.Spacing.xs) {
-                                            NavigationLink {
-                                                if let bill = cycle.billItem {
-                                                    BillDetailView(
-                                                        bill: bill,
-                                                        notificationService: notificationService,
-                                                        attachmentStore: attachmentStore,
-                                                        initialCycleID: cycle.id
-                                                    )
-                                                } else {
-                                                    Text("Bill unavailable")
-                                                }
-                                            } label: {
-                                                timelineCard(for: cycle)
-                                            }
-                                            .buttonStyle(.plain)
-
-                                            timelineQuickActions(for: cycle)
-                                        }
+                                        timelineRow(for: cycle)
                                     }
                                 }
                             }
@@ -138,6 +74,10 @@ struct TimelineView: View {
                 .padding(.horizontal, AppTheme.Spacing.md)
                 .padding(.top, AppTheme.Spacing.md)
                 .padding(.bottom, AppTheme.Spacing.xl)
+            }
+            .safeAreaInset(edge: .bottom) {
+                Color.clear
+                    .frame(height: AppTheme.Spacing.lg)
             }
             .appScreenBackground()
             .navigationTitle("Monthly Timeline")
@@ -177,7 +117,36 @@ struct TimelineView: View {
         }
     }
 
-    private func timelineCard(for cycle: BillCycle) -> some View {
+    private func timelineRow(for cycle: BillCycle) -> some View {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
+            NavigationLink {
+                if let bill = cycle.billItem {
+                    BillDetailView(
+                        bill: bill,
+                        notificationService: notificationService,
+                        attachmentStore: attachmentStore,
+                        initialCycleID: cycle.id
+                    )
+                } else {
+                    Text("Bill unavailable")
+                }
+            } label: {
+                timelineCardContent(for: cycle)
+            }
+            .buttonStyle(.plain)
+
+            timelineQuickActions(for: cycle)
+        }
+        .padding(AppTheme.Spacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
+                .fill(AppTheme.Colors.surfaceElevated)
+        )
+        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: AppTheme.Border.standard)
+    }
+
+    private func timelineCardContent(for cycle: BillCycle) -> some View {
         HStack(alignment: .top, spacing: AppTheme.Spacing.sm) {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.xxs) {
                 Text(cycle.billItem?.displayName ?? "Unknown Bill")
@@ -205,12 +174,6 @@ struct TimelineView: View {
                     .foregroundStyle(AppTheme.Colors.textSecondary)
             }
         }
-        .padding(AppTheme.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
-                .fill(AppTheme.Colors.surfaceElevated)
-        )
-        .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: AppTheme.Border.standard)
     }
 
     @ViewBuilder
@@ -250,27 +213,6 @@ struct TimelineView: View {
             .sorted { $0.dueDate < $1.dueDate }
     }
 
-    private var monthUnpaidCount: Int {
-        filteredCycles.filter { $0.paymentState == .unpaid }.count
-    }
-
-    private var monthOverdueCount: Int {
-        filteredCycles.filter { $0.paymentState == .unpaid && $0.overdueStartedAt != nil }.count
-    }
-
-    private var monthDueAmount: Double {
-        filteredCycles.reduce(0) { sum, cycle in
-            sum + (cycle.billItem?.expectedAmount ?? 0)
-        }
-    }
-
-    private func formattedAmount(_ amount: Double) -> String {
-        if let formatted = Self.amountFormatter.string(from: NSNumber(value: amount)) {
-            return formatted
-        }
-        return String(format: "%.2f", amount)
-    }
-
     private func actionRow(icon: String, text: String) -> some View {
         HStack {
             Image(systemName: icon)
@@ -278,34 +220,6 @@ struct TimelineView: View {
             Spacer()
         }
         .font(.subheadline.weight(.semibold))
-    }
-
-    private func snapshotStat(title: String, value: String, systemImage: String, tone: AppTone) -> some View {
-        HStack(spacing: AppTheme.Spacing.xs) {
-            Image(systemName: systemImage)
-                .foregroundStyle(AppTheme.Colors.tint(for: tone))
-            VStack(alignment: .leading, spacing: AppTheme.Spacing.xxs) {
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(AppTheme.Colors.textSecondary)
-                Text(value)
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(AppTheme.Colors.textPrimary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(AppTheme.Spacing.sm)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
-                .fill(AppTheme.Colors.toneFill(for: tone))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
-                .stroke(AppTheme.Colors.border, lineWidth: AppTheme.Border.standard)
-        )
     }
 
     private func markCyclePaid(_ cycle: BillCycle) {
