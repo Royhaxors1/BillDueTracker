@@ -79,7 +79,7 @@ enum BillOperations {
             dueDateRule: draft.dueDateRule,
             billingCadence: cadenceFields.cadence,
             annualDueMonth: cadenceFields.annualDueMonth,
-            currency: Locale.current.currencyCode ?? "SGD",
+            currency: Locale.current.currency?.identifier ?? "SGD",
             expectedAmount: draft.expectedAmount,
             autopayEnabled: draft.autopayEnabled,
             autopayNote: draft.autopayNote,

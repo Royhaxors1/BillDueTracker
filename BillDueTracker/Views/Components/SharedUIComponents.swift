@@ -186,10 +186,11 @@ struct SwipeToDeleteContainer<Content: View>: View {
     @State private var isHorizontalDrag = false
     @State private var crossedOpenThreshold = false
 
-    private let actionWidth: CGFloat = 96
-    private let openThreshold: CGFloat = 38
-    private let closeThreshold: CGFloat = 58
-    private let dragDamping: CGFloat = 0.28
+    private let actionWidth: CGFloat = 88
+    private let openThreshold: CGFloat = 44
+    private let closeThreshold: CGFloat = 52
+    private let dragDamping: CGFloat = 0.24
+    private let directionalLockRatio: CGFloat = 1.35
     private let revealStartThreshold: CGFloat = 0.12
     private let settleAnimation = Animation.spring(response: 0.26, dampingFraction: 0.86)
 
@@ -217,7 +218,17 @@ struct SwipeToDeleteContainer<Content: View>: View {
                 .frame(width: actionWidth)
                 .frame(maxHeight: .infinity)
                 .foregroundStyle(.white.opacity(visibleRevealProgress))
-                .background(AppTheme.Colors.overdue.opacity(visibleRevealProgress))
+                .background(
+                    LinearGradient(
+                        colors: [
+                            AppTheme.Colors.overdue.opacity(0.92),
+                            AppTheme.Colors.overdue.opacity(0.74)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .opacity(visibleRevealProgress)
+                )
                 .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
                 .scaleEffect(0.92 + (0.08 * visibleRevealProgress))
                 .animation(.easeOut(duration: 0.16), value: visibleRevealProgress)
@@ -232,14 +243,20 @@ struct SwipeToDeleteContainer<Content: View>: View {
                 .offset(x: contentOffset)
                 .accessibilitySortPriority(1)
                 .simultaneousGesture(
-                    DragGesture(minimumDistance: 10)
+                    DragGesture(minimumDistance: 12)
                         .onChanged { value in
                             let horizontalDistance = abs(value.translation.width)
                             let verticalDistance = abs(value.translation.height)
-                            if !isHorizontalDrag, horizontalDistance > verticalDistance {
-                                isHorizontalDrag = true
+                            if !isHorizontalDrag {
+                                let hasDominantHorizontalDrag =
+                                    horizontalDistance > 14 &&
+                                    horizontalDistance > (verticalDistance * directionalLockRatio)
+                                if hasDominantHorizontalDrag {
+                                    isHorizontalDrag = true
+                                } else {
+                                    return
+                                }
                             }
-                            guard isHorizontalDrag else { return }
 
                             let baseline = isOpen ? -actionWidth : 0
                             let rawOffset = baseline + value.translation.width
@@ -255,10 +272,12 @@ struct SwipeToDeleteContainer<Content: View>: View {
                             settle(toOpen: shouldSettleOpen(for: predicted))
                         }
                 )
-                .onTapGesture {
-                    guard isOpen else { return }
-                    settle(toOpen: false)
-                }
+                .simultaneousGesture(
+                    TapGesture().onEnded {
+                        guard isOpen else { return }
+                        settle(toOpen: false)
+                    }
+                )
         }
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
     }

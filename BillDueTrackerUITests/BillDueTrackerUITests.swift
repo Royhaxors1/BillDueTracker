@@ -39,12 +39,12 @@ final class BillDueTrackerUITests: XCTestCase {
     }
 
     func testNavigateDashboardToDetailAndBack() {
-        let billCell = app.staticTexts["Home Utilities"]
-        XCTAssertTrue(billCell.waitForExistence(timeout: 5))
-        billCell.tap()
+        let editButton = app.buttons["dashboard.quickAction.edit"].firstMatch
+        XCTAssertTrue(editButton.waitForExistence(timeout: 5))
+        editButton.tap()
 
-        XCTAssertTrue(app.navigationBars["Home Utilities"].waitForExistence(timeout: 5))
-        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(app.navigationBars["Edit Bill"].waitForExistence(timeout: 5))
+        app.navigationBars["Edit Bill"].buttons["Cancel"].tap()
         XCTAssertTrue(app.navigationBars["Bill Due Tracker"].waitForExistence(timeout: 5))
     }
 

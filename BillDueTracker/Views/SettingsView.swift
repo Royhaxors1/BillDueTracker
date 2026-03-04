@@ -25,6 +25,7 @@ struct SettingsView: View {
     @State private var showRestoreConfirmation = false
     @State private var pendingRestoreURL: URL?
     @State private var reminderStageSelections: [ReminderStage: Bool] = [:]
+    @State private var isRestoringPurchases = false
 
     private var reminderFreshness: ReminderFreshness {
         guard let lastReconciledAt = users.first?.lastReminderReconciledAt else {
@@ -89,6 +90,20 @@ struct SettingsView: View {
                             detailLine("Current Plan", entitlementState.tier.title)
                             detailLine("Free Bill Limit", "\(UsageLimitService.freeActiveBillLimit) active bills")
                             detailLine("Renewal", renewalStatusText)
+
+                            Button {
+                                Task {
+                                    await restorePurchasesFromSettings()
+                                }
+                            } label: {
+                                actionRow(
+                                    icon: "arrow.clockwise.circle.fill",
+                                    text: isRestoringPurchases ? "Restoring Purchases..." : "Restore Purchases"
+                                )
+                            }
+                            .buttonStyle(.bordered)
+                            .disabled(isRestoringPurchases)
+                            .accessibilityIdentifier("settings.restorePurchases")
 
                             if entitlementState.isPro {
                                 HStack(spacing: AppTheme.Spacing.xs) {
@@ -217,22 +232,35 @@ struct SettingsView: View {
                             .buttonStyle(.bordered)
                             .accessibilityIdentifier("settings.sendTest")
 
-                            Button {
-                                Task {
-                                    await BillOperations.reconcileReminders(
-                                        context: modelContext,
-                                        notificationService: notificationService,
-                                        now: .now,
-                                        timeZone: .current
-                                    )
-                                    statusMessage = "Reminder schedules refreshed."
-                                    await refreshNotificationHealth()
+                            DisclosureGroup {
+                                VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
+                                    Text("Use this only if reminder delivery looks out of sync.")
+                                        .font(.caption)
+                                        .foregroundStyle(AppTheme.Colors.textSecondary)
+
+                                    Button {
+                                        Task {
+                                            await BillOperations.reconcileReminders(
+                                                context: modelContext,
+                                                notificationService: notificationService,
+                                                now: .now,
+                                                timeZone: .current
+                                            )
+                                            statusMessage = "Reminder schedules refreshed."
+                                            await refreshNotificationHealth()
+                                        }
+                                    } label: {
+                                        actionRow(icon: "arrow.clockwise", text: "Force Reminder Sync")
+                                    }
+                                    .buttonStyle(.bordered)
+                                    .accessibilityIdentifier("settings.reconcile")
                                 }
+                                .padding(.top, AppTheme.Spacing.xs)
                             } label: {
-                                actionRow(icon: "arrow.clockwise", text: "Reconcile Reminder Schedules")
+                                Label("Advanced Notification Maintenance", systemImage: "wrench.and.screwdriver.fill")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(AppTheme.Colors.textSecondary)
                             }
-                            .buttonStyle(.bordered)
-                            .accessibilityIdentifier("settings.reconcile")
                         }
                     }
 
@@ -491,6 +519,21 @@ struct SettingsView: View {
             await refreshNotificationHealth()
         } catch {
             statusMessage = "Restore failed: \(error.localizedDescription)"
+        }
+    }
+
+    private func restorePurchasesFromSettings() async {
+        guard !isRestoringPurchases else { return }
+        isRestoringPurchases = true
+        defer { isRestoringPurchases = false }
+
+        do {
+            try await entitlementState.restorePurchases()
+            statusMessage = "Purchases restored successfully."
+        } catch EntitlementError.noActiveSubscription {
+            statusMessage = "No active subscription found for this Apple Account."
+        } catch {
+            statusMessage = "Restore purchases failed: \(error.localizedDescription)"
         }
     }
 
