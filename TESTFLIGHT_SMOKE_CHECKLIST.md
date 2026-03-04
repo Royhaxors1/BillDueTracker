@@ -3,7 +3,7 @@
 Build target:
 - App: `BillDueTracker`
 - Expected marketing version: `1.0`
-- Expected build number: `5`
+- Expected build number: `7`
 
 Tester/device:
 - Tester name:
@@ -16,7 +16,7 @@ Tester/device:
 3. Confirm no crash on first launch.
 
 Result:
-- [ ] Pass
+- [Yes] Pass
 - [ ] Fail
 - Notes:
 
@@ -27,9 +27,9 @@ Result:
 4. Confirm Dashboard sections update (`Overdue`, `Due Soon`, `Upcoming`, `Paid This Month`).
 
 Result:
-- [ ] Pass
+- [yes] Pass
 - [ ] Fail
-- Notes:
+- Notes: Scrolling seems unresponsive when scrolling over each bill. 
 
 ## Gate 2B: Edit Due Date Save Regression
 1. Open an existing bill.
@@ -40,8 +40,8 @@ Result:
 
 Result:
 - [ ] Pass
-- [ ] Fail
-- Notes:
+- [fail] Fail
+- Notes: changing to a date on different month doesnt save. Also when adding bill, doesn't allow user to select bill due date on different months
 
 ## Gate 3: Notifications
 1. In Settings, request notification permission if needed.
@@ -50,7 +50,7 @@ Result:
 4. Re-open app and ensure no crash.
 
 Result:
-- [ ] Pass
+- [Pass] Pass
 - [ ] Fail
 - Notes:
 
@@ -71,9 +71,9 @@ Result:
 4. Verify entitlement remains active.
 
 Result:
-- [ ] Pass
+- [Pass] Pass
 - [ ] Fail
-- Notes:
+- Notes: No restore purchases button.
 
 ## Gate 6: CSV Export
 1. Go to Settings.
@@ -83,9 +83,9 @@ Result:
 5. Confirm share sheet appears and file name ends with `.csv`.
 
 Result:
-- [ ] Pass
+- [Pass] Pass
 - [ ] Fail
-- Notes:
+- Notes: Not sure if having CSV exports is worth it. We're bringing users a step back instead of managing it in-app.
 
 ## Gate 6B: Swipe Delete (Dashboard + Timeline)
 1. In Dashboard, swipe left on a bill card.
@@ -97,8 +97,8 @@ Result:
 
 Result:
 - [ ] Pass
-- [ ] Fail
-- Notes:
+- [Fail] Fail
+- Notes: Not sure why Dashboard doesn't show the same info as Dashboard. Can see 3 unpaid bills on Timeline but in Dashboard only see 1 Upcoming
 
 ## Gate 6C: Notification Settings Simplified UX
 1. Go to Settings > Notifications.
@@ -108,9 +108,9 @@ Result:
 5. Tap `Reconcile Reminder Schedules` and confirm completion message.
 
 Result:
-- [ ] Pass
+- [Pass] Pass
 - [ ] Fail
-- Notes:
+- Notes: Not sure why there needs to be reconcile reminder schedules button. Seems irrelevant, doesn't conform to best apps practices.
 
 ## Gate 7: Backup + Restore
 1. Tap `Create Full Backup`.
@@ -130,12 +130,12 @@ Result:
 3. Confirm no visual corruption or crash.
 
 Result:
-- [ ] Pass
+- [Pass] Pass
 - [ ] Fail
 - Notes:
 
 ## Launch Decision
 - [ ] Go
-- [ ] No-Go
+- [No-go] No-Go
 
 No-Go if any gate above fails.

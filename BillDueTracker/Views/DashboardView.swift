@@ -79,13 +79,19 @@ struct DashboardView: View {
                     }
 
                     SectionCard(title: "Filter", subtitle: "Choose which bills to show.") {
-                        Picker("Bill Scope", selection: $scopeFilter) {
-                            ForEach(BillScopeFilter.allCases) { filter in
-                                Text(filter.title).tag(filter)
+                        VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
+                            Picker("Bill Scope", selection: $scopeFilter) {
+                                ForEach(BillScopeFilter.allCases) { filter in
+                                    Text(filter.title).tag(filter)
+                                }
                             }
+                            .pickerStyle(.segmented)
+                            .accessibilityIdentifier("dashboard.scopeFilter")
+
+                            Text("Dashboard highlights one actionable cycle per bill. Timeline shows all cycles in a selected month.")
+                                .font(.caption)
+                                .foregroundStyle(AppTheme.Colors.textSecondary)
                         }
-                        .pickerStyle(.segmented)
-                        .accessibilityIdentifier("dashboard.scopeFilter")
                     }
 
                     if scopeFilter != .inactive,
@@ -274,10 +280,13 @@ struct DashboardView: View {
 
     private func dashboardRow(bill: BillItem, cycle: BillCycle) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.sm) {
-            NavigationLink(value: BillNavigationTarget(billID: bill.id, cycleID: cycle.id)) {
+            Button {
+                navigationPath.append(BillNavigationTarget(billID: bill.id, cycleID: cycle.id))
+            } label: {
                 BillCardView(bill: bill, cycle: cycle, showContainer: false)
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("dashboard.billCard")
 
             Divider()
                 .overlay(AppTheme.Colors.hairline)
@@ -348,9 +357,13 @@ struct DashboardView: View {
                     }
                 }
 
-                Text("\(activeBillCount) active bills are being tracked this month.")
+                Text("\(currentMonthUnpaidCount) unpaid cycle(s) this month: \(currentMonthRiskSummary).")
                     .font(.footnote)
                     .foregroundStyle(AppTheme.Colors.textSecondary)
+
+                Text("\(activeBillCount) active bill profile(s) are currently tracked.")
+                    .font(.footnote)
+                    .foregroundStyle(AppTheme.Colors.textMuted)
             }
         }
     }
@@ -373,6 +386,14 @@ struct DashboardView: View {
 
     private var activeBillCount: Int {
         bills.filter(\.isActive).count
+    }
+
+    private var currentMonthUnpaidCount: Int {
+        currentMonthUnpaidPairs.count
+    }
+
+    private var currentMonthRiskSummary: String {
+        "\(currentMonthOverdueCount) overdue, \(currentMonthDueSoonCount) due soon, \(currentMonthUpcomingCount) upcoming"
     }
 
     private var projectedMonthDueAmount: Double {
@@ -412,6 +433,41 @@ struct DashboardView: View {
             }
             return (bill, cycle)
         }
+    }
+
+    private var currentMonthUnpaidPairs: [(BillItem, BillCycle)] {
+        let monthID = BillCycleEngine.cycleMonthIdentifier(for: .now, in: .current)
+        return scopedBills
+            .filter(\.isActive)
+            .compactMap { bill in
+                guard let cycle = bill.cycles.first(where: { cycle in
+                    cycle.cycleMonth == monthID && cycle.paymentState == .unpaid
+                }) else {
+                    return nil
+                }
+                return (bill, cycle)
+            }
+            .sorted { $0.1.dueDate < $1.1.dueDate }
+    }
+
+    private var currentMonthOverdueCount: Int {
+        currentMonthUnpaidPairs.filter { _, cycle in
+            cycle.overdueStartedAt != nil || cycle.dueDate < .now
+        }.count
+    }
+
+    private var currentMonthDueSoonCount: Int {
+        let end = Date().addingDays(7, in: .current)
+        return currentMonthUnpaidPairs.filter { _, cycle in
+            cycle.overdueStartedAt == nil && cycle.dueDate >= .now && cycle.dueDate <= end
+        }.count
+    }
+
+    private var currentMonthUpcomingCount: Int {
+        let start = Date().addingDays(8, in: .current)
+        return currentMonthUnpaidPairs.filter { _, cycle in
+            cycle.dueDate >= start
+        }.count
     }
 
     private var overdueBills: [(BillItem, BillCycle)] {

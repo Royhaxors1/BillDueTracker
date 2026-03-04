@@ -25,6 +25,8 @@ struct QuickAddBillView: View {
     @State private var errorMessage: String?
     @State private var paywallEntryPoint: PaywallEntryPoint?
     @State private var isHydratingExistingBill = false
+    @State private var selectedDueDate = Date.now
+    @State private var isSyncingDueDateSelection = false
 
     private var providers: [String] {
         BillOperations.providerNames(for: draft.category, context: modelContext)
@@ -36,13 +38,6 @@ struct QuickAddBillView: View {
 
     private var requiresAnnualDueMonth: Bool {
         draft.category == .subscriptionDue && draft.billingCadence == .yearly
-    }
-
-    private var dueDateSelection: Binding<Date> {
-        Binding(
-            get: { resolvedDueDate() },
-            set: { updateDraftDueDate(from: $0) }
-        )
     }
 
     private var canUseExtractionAutomation: Bool {
@@ -83,6 +78,7 @@ struct QuickAddBillView: View {
                         } else if draft.billingCadence == .yearly, draft.annualDueMonth == nil {
                             draft.annualDueMonth = Calendar.gregorian.component(.month, from: .now)
                         }
+                        syncSelectedDueDate(referenceDate: selectedDueDate)
                     }
 
                     Toggle("Use Custom Provider", isOn: $useCustomProvider)
@@ -112,7 +108,7 @@ struct QuickAddBillView: View {
                         .accessibilityIdentifier("quickadd.cadence")
                     }
 
-                    DatePicker("Due date", selection: dueDateSelection, displayedComponents: [.date])
+                    DatePicker("Due date", selection: $selectedDueDate, displayedComponents: [.date])
                         .datePickerStyle(.graphical)
                         .accessibilityIdentifier("quickadd.dueDate")
 
@@ -122,7 +118,7 @@ struct QuickAddBillView: View {
                             .foregroundStyle(AppTheme.Colors.textSecondary)
                             .accessibilityIdentifier("quickadd.yearlyHint")
                     } else {
-                        Text("Bills recur on day \(draft.dueDay) each month.")
+                        Text("Bills recur on day \(draft.dueDay) each month. Pick any date to set that day.")
                             .font(.caption)
                             .foregroundStyle(AppTheme.Colors.textSecondary)
                             .accessibilityIdentifier("quickadd.monthlyHint")
@@ -265,6 +261,11 @@ struct QuickAddBillView: View {
                         draft.annualDueMonth = Calendar.gregorian.component(.month, from: .now)
                     }
                 }
+                syncSelectedDueDate(referenceDate: selectedDueDate)
+            }
+            .onChange(of: selectedDueDate) { _, newDate in
+                guard !isSyncingDueDateSelection else { return }
+                updateDraftDueDate(from: newDate)
             }
             .onAppear {
                 if let billToEdit {
@@ -272,6 +273,7 @@ struct QuickAddBillView: View {
                 } else if draft.providerName.isEmpty {
                     draft.providerName = providers.first ?? ""
                 }
+                syncSelectedDueDate(referenceDate: selectedDueDate)
             }
         }
     }
@@ -302,6 +304,13 @@ struct QuickAddBillView: View {
         DispatchQueue.main.async {
             isHydratingExistingBill = false
         }
+
+        let referenceDate = BillOperations.cycleForCurrentMonth(
+            bill: bill,
+            now: .now,
+            timeZone: .current
+        )?.dueDate ?? .now
+        syncSelectedDueDate(referenceDate: referenceDate)
     }
 
     private func applyExtraction(_ extraction: BillExtractionResult) {
@@ -333,6 +342,7 @@ struct QuickAddBillView: View {
             .joined(separator: ", ")
 
         extractionMessage = summary.isEmpty ? "No due date detected." : "Detected: \(summary)"
+        syncSelectedDueDate(referenceDate: selectedDueDate)
     }
 
     private func toneForConfidence(_ confidence: ExtractionConfidence) -> AppTone {
@@ -420,11 +430,10 @@ struct QuickAddBillView: View {
         return activeBills.count
     }
 
-    private func resolvedDueDate() -> Date {
+    private func resolvedDueDate(referenceDate: Date) -> Date {
         let calendar = Calendar.gregorian
-        let today = Date.now
-        let year = calendar.component(.year, from: today)
-        let fallbackMonth = calendar.component(.month, from: today)
+        let year = calendar.component(.year, from: referenceDate)
+        let fallbackMonth = calendar.component(.month, from: referenceDate)
 
         let month: Int
         if draft.category == .subscriptionDue, draft.billingCadence == .yearly {
@@ -433,10 +442,10 @@ struct QuickAddBillView: View {
             month = fallbackMonth
         }
 
-        let baseDate = calendar.date(from: DateComponents(year: year, month: month, day: 1)) ?? today
+        let baseDate = calendar.date(from: DateComponents(year: year, month: month, day: 1)) ?? referenceDate
         let maxDay = calendar.range(of: .day, in: .month, for: baseDate)?.count ?? 31
         let safeDay = min(max(draft.dueDay, 1), maxDay)
-        return calendar.date(from: DateComponents(year: year, month: month, day: safeDay)) ?? today
+        return calendar.date(from: DateComponents(year: year, month: month, day: safeDay)) ?? referenceDate
     }
 
     private func updateDraftDueDate(from date: Date) {
@@ -445,6 +454,13 @@ struct QuickAddBillView: View {
         if draft.category == .subscriptionDue, draft.billingCadence == .yearly {
             draft.annualDueMonth = calendar.component(.month, from: date)
         }
+    }
+
+    private func syncSelectedDueDate(referenceDate: Date) {
+        let resolved = resolvedDueDate(referenceDate: referenceDate)
+        isSyncingDueDateSelection = true
+        selectedDueDate = resolved
+        isSyncingDueDateSelection = false
     }
 
     private func monthName(for month: Int?) -> String {

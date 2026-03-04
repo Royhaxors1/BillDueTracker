@@ -42,7 +42,7 @@ struct TimelineView: View {
 
                     SectionCard(
                         title: "Bills & Subscriptions",
-                        subtitle: "All cycles for \(selectedMonth.formatted(.dateTime.month(.wide).year()))."
+                        subtitle: monthSummary
                     ) {
                         if filteredCycles.isEmpty {
                             EmptyStateCard(
@@ -131,7 +131,11 @@ struct TimelineView: View {
                     Text("Bill unavailable")
                 }
             } label: {
-                timelineCardContent(for: cycle)
+                if let bill = cycle.billItem {
+                    BillCardView(bill: bill, cycle: cycle, showContainer: false)
+                } else {
+                    timelineFallbackCard(for: cycle)
+                }
             }
             .buttonStyle(.plain)
 
@@ -146,16 +150,12 @@ struct TimelineView: View {
         .appElevatedCard(cornerRadius: AppTheme.Radius.card, borderWidth: AppTheme.Border.standard)
     }
 
-    private func timelineCardContent(for cycle: BillCycle) -> some View {
+    private func timelineFallbackCard(for cycle: BillCycle) -> some View {
         HStack(alignment: .top, spacing: AppTheme.Spacing.sm) {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.xxs) {
-                Text(cycle.billItem?.displayName ?? "Unknown Bill")
+                Text("Unknown Bill")
                     .font(.headline)
                     .foregroundStyle(AppTheme.Colors.textPrimary)
-
-                Text(cycle.billItem?.providerName ?? "")
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.Colors.textSecondary)
 
                 Text("Due \(cycle.dueDate.formatted(date: .abbreviated, time: .omitted))")
                     .font(.caption)
@@ -204,6 +204,7 @@ struct TimelineView: View {
             Spacer(minLength: 0)
         }
         .padding(.horizontal, AppTheme.Spacing.xs)
+        .padding(.top, AppTheme.Spacing.xxs)
     }
 
     private var filteredCycles: [BillCycle] {
@@ -211,6 +212,12 @@ struct TimelineView: View {
         return cycles
             .filter { $0.cycleMonth == monthID }
             .sorted { $0.dueDate < $1.dueDate }
+    }
+
+    private var monthSummary: String {
+        let monthLabel = selectedMonth.formatted(.dateTime.month(.wide).year())
+        let unpaidCount = filteredCycles.filter { $0.paymentState == .unpaid }.count
+        return "All cycles for \(monthLabel). \(unpaidCount) unpaid."
     }
 
     private func actionRow(icon: String, text: String) -> some View {

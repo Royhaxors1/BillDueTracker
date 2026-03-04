@@ -110,10 +110,23 @@ struct BillCardView: View {
     }
 
     private func dueLine(for cycle: BillCycle) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return "Due \(formatter.string(from: cycle.dueDate))"
+        let dueDateLabel = cycle.dueDate.formatted(date: .abbreviated, time: .omitted)
+        let dayDelta = Calendar.gregorian.dateComponents(
+            [.day],
+            from: Date.now.startOfDay(in: .current),
+            to: cycle.dueDate.startOfDay(in: .current)
+        ).day ?? 0
+
+        switch dayDelta {
+        case ..<0:
+            return "Due \(dueDateLabel)"
+        case 0:
+            return "Due today"
+        case 1:
+            return "Due tomorrow"
+        default:
+            return "Due \(dueDateLabel) (\(dayDelta)d)"
+        }
     }
 
     private var accessibilitySummary: String {
